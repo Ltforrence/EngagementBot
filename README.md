@@ -13,3 +13,7 @@ Have the bot like all tweets the accounts it follows tweets
 If you send it a DM, it will reply to all of your tweets as well with a custom message. "Great tweet _____" with the blank being whatever you dmed it
 I would like this to be running constantly (or like at least once a minute)
 Also I think with the DM functionality I could code in a few keywords that whenever I DM the bot it will do even more things
+
+
+
+You will not be able to use this bot unless you change the keys in the config file
