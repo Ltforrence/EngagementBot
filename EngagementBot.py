@@ -37,6 +37,36 @@ def like_tweets(api):
             api.create_favorite(tweet.id)
             print(f"{tweet.user.name} said {tweet.text}")
 
+def handle_dms(api):
+    #This method will take all dms from the past 30 days read them and respond to them accordingly then delete them from my interface
+    #if dm is HELP then it will give it instructions on what it can do. I will handle that first
+    followers = api.followers()
+    DMs = api.list_direct_messages()
+    for dm in DMs:
+        #if sender is following then proceed and reply accordingly
+        #This may be a costly api call in the end so might not be worth it, but we'll see. It will save time and complexity
+        temp_user = api.get_user(dm.message_create['sender_id'])
+        if temp_user in followers:
+            #reply to them
+            send_dm(dm, api, temp_user)
+        #Then delete the message. I think this only deletes it for the bot. thats what the documentation seemed to indicate, but we will see
+        api.destroy_direct_message(dm.id)
+
+def send_dm(dm, api, temp_user):
+    #So this message will then interpret the message that was received and send one back
+    #for now we will only handle the help command
+    message = ""
+    if dm.message_create['message_data']['text'] == "HELP":
+        #construct help message reply
+        message = "Help MENU to be implemented \nThank you for using Luke's Engagement Bot"
+    else:
+        message = "I'm sorry I don't understand that command, please reply 'HELP' if you would like more information about my functions"
+    #put other options here obviously in an else if
+    #if there was a message as in if it fit any of the options send the message back to sender. Otherwise do nothing
+    if message != "":
+        logger.info(f"Sending DM to {temp_user.name}")
+        api.send_direct_message(dm.message_create['sender_id'], message)
+
 def reply_tweets(api):
     #here we implement replying to some tweets
     user = api.me() #This is just a filler thing here.
@@ -55,6 +85,7 @@ def main():
 
         like_tweets(api)
         reply_tweets(api)
+        handle_dms(api)
 
         logger.info("Waiting...")
         time.sleep(60)
