@@ -14,7 +14,7 @@ def follow_followers(api, followers):
             logger.info(f"Following {follower.name}")
             follower.follow()
 
-def unfollow_unfollowers(api):
+def unfollow_unfollowers(api, followers):
     logger.info("Retrieving and unfollowing unfollowers")
     for followling in tweepy.Cursor(api.friends).items():   
         #instead of making an api call here I will just crosscheck a list of 
@@ -53,7 +53,7 @@ def main():
         #okay so unfollow is going to be a somewhat costly method check wise
         #so instead of writing something better, I will just check if followers and following have the same number
         if check_follower_count(api):
-            unfollow_unfollowers(api)
+            unfollow_unfollowers(api, followers)
 
         like_tweets(api)
         reply_tweets(api)
