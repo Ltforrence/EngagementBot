@@ -56,10 +56,10 @@ def construct_message(dm, api, temp_user):
     #for now we will only handle the help command
 
     message = ""
-    recieved_text = dm.message_create['message_data']['text']
+    recieved_text = dm.message_create['message_data']['text'].upper()
     if  recieved_text == "HELP":
         #construct help message reply
-        message = "HELP MENU\nFunctions:\nREPLY: Engagement Bot will reply to your tweets with simple message and a one word name of your choice\nREPLY STRING: Engagement Bot will reply to your tweets with custom message you create\nREPLY STOP: End and delete your current reply settings\nMESSAGE: send message to Luke about issues or possible new functionality \nThank you for using Luke's Engagement Bot"
+        message = "HELP MENU\nFunctions:\nREPLY -- Engagement Bot will reply to your tweets with simple message and a one word name of your choice\nREPLY STRING -- Engagement Bot will reply to your tweets with custom message you create\nREPLY STOP -- End and delete your current reply settings\nMESSAGE -- send message to Luke about issues or possible new functionality \nINFO -- Will give you info about bot's current progress \nThank you for using Luke's Engagement Bot"
     elif recieved_text[0:4]=="HELP":
         #There should be a space after help so 5 onward
         if recieved_text[5:]=="REPLY":
@@ -77,7 +77,7 @@ def construct_message(dm, api, temp_user):
         #not sure if this works for get_user, but we'll see
         send_dm(api, temp_user.screen_name+" said: '"+recieved_text[8:] +"' about your application", api.get_user("ItBeLuke"))
     elif recieved_text == "INFO":
-        message
+        message = "Currently implementing DM features of bot. Just finished MESSAGE. Reply not implemented yet. Trying to fix some of the code up to look nice too. Will next work on REPLY and REPLY STRING"
     else:
         message = "I'm sorry I don't understand that command, please reply 'HELP' if you would like more information about my functions"
     #put other options here obviously in an else if
