@@ -32,15 +32,15 @@ def check_follower_count(api):
 def like_tweets(api):
     #here we implement liking users tweets that follow us
     #What I have here right now is a pretty crude way of liking tweets. I just pulls the timeline and likes all tweets in it
-    timeline = api.home_timeline()
-    for tweet in timeline:
+    for tweet in tweepy.Cursor(api.home_timeline).items(20): #sooooo not exactly sure why more than 20 is the highest I can go right now because it should be 60
         if not tweet.favorited:
             api.create_favorite(tweet.id)
             print(f"{tweet.user.name} said {tweet.text}")
 
 def reply_tweets(api):
     #here we implement replying to some tweets
-    user = api.me()
+    user = api.me() #This is just a filler thing here.
+    #I think what I wanna do is return from the previous one tweets I liked this time and then replying to them.
 
 
 
