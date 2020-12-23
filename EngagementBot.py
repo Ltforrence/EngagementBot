@@ -3,6 +3,7 @@ import logging
 from config import create_api
 from dm_handling import handle_dms
 from tweet_handling import handle_tweets
+from reply_string_handling import get_reply_strings, set_reply_strings
 import time
 
 logging.basicConfig(level=logging.INFO)
@@ -32,6 +33,8 @@ def check_follower_count(api):
 
 def main():
     api = create_api()
+
+    replies = get_reply_strings(api)
     #initialize this
     check = True
     #This is just a high number to start at that's tweet took place recently for me. You can just make this 1
