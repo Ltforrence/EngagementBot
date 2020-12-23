@@ -2,6 +2,7 @@ import tweepy
 import logging
 from config import create_api
 from dm_handling import handle_dms
+from tweet_handling import handle_tweets
 import time
 
 logging.basicConfig(level=logging.INFO)
@@ -29,30 +30,6 @@ def check_follower_count(api):
     #returns true if you should go into unfollowers
     return user.followers_count != user.friends_count
 
-def like_tweets(api, since):
-    #Now changing how timeline functions. Pulling only tweets that are newer than the newest one in the previoous try
-    #Could do since + 1 here, but it is nice to see the reassurance of the most recent tweet every time, 
-    timeline = api.home_timeline(since_id = since)
-    print(f"since: {since}")
-
-    #might have to put a if any tweets then do this for loop
-    for tweet in timeline:
-        if not tweet.favorited:
-            print(f"{tweet.id} : {tweet.user.name} said {tweet.text}")
-            api.create_favorite(tweet.id)
-        if tweet.id > since: 
-            since = tweet.id
-    
-    return since
-
-
-def reply_tweets(api):
-    #here we implement replying to some tweets
-    user = api.me() #This is just a filler thing here.
-    #I think what I wanna do is return from the previous one tweets I liked this time and then replying to them.
-
-
-
 def main():
     api = create_api()
     #initialize this
@@ -70,9 +47,7 @@ def main():
         if check_follower_count(api):
             unfollow_unfollowers(api, followers)
 
-        since = like_tweets(api, since)
-
-        reply_tweets(api)
+        since = handle_tweets(api, since)
 
         logger.info("Checking DMs")
 
