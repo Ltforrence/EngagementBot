@@ -1,4 +1,4 @@
-# tweepy-bots/bots/config.py
+# tweepy-bots/EngagementBot/config.py
 import tweepy
 import logging
 import os

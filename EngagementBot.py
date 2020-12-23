@@ -29,13 +29,22 @@ def check_follower_count(api):
     #returns true if you should go into unfollowers
     return user.followers_count != user.friends_count
 
-def like_tweets(api):
-    #here we implement liking users tweets that follow us
-    #What I have here right now is a pretty crude way of liking tweets. I just pulls the timeline and likes all tweets in it
-    for tweet in tweepy.Cursor(api.home_timeline).items(20): #sooooo not exactly sure why more than 20 is the highest I can go right now because it should be 60
+def like_tweets(api, since):
+    #Now changing how timeline functions. Pulling only tweets that are newer than the newest one in the previoous try
+    #Could do since + 1 here, but it is nice to see the reassurance of the most recent tweet every time, 
+    timeline = api.home_timeline(since_id = since)
+    print(f"since: {since}")
+
+    #might have to put a if any tweets then do this for loop
+    for tweet in timeline:
+        print(f"{tweet.id} : {tweet.user.name} said {tweet.text}")
         if not tweet.favorited:
+            print("Liking Above tweet")
             api.create_favorite(tweet.id)
-            print(f"{tweet.user.name} said {tweet.text}")
+        if tweet.id > since: 
+            since = tweet.id
+    
+    return since
 
 
 def reply_tweets(api):
@@ -47,20 +56,38 @@ def reply_tweets(api):
 
 def main():
     api = create_api()
+    #initialize this
+    check = True
+    #This is just a high number to start at that's tweet took place recently for me. You can just make this 1
+    since = 1341570120687226879
     while True:
-        followers = api.followers()
-        follow_followers(api, followers)
-        #okay so unfollow is going to be a somewhat costly method check wise
-        #so instead of writing something better, I will just check if followers and following have the same number
-        if check_follower_count(api):
-            unfollow_unfollowers(api, followers)
+        #only check for list of followers every minute so we can update more often, but check everything else every 30 seconds
+        if check:
+            #only do all this code every other time
+            followers = api.followers()
+            follow_followers(api, followers)
 
-        like_tweets(api)
-        reply_tweets(api)
+            #okay so unfollow is going to be a somewhat costly method
+            #so instead of writing something better, for now I will just check if followers and following have the same number then do it if they do not
+            if check_follower_count(api):
+                unfollow_unfollowers(api, followers)
+
+            #So I am also putting this in here so we can do dms every 30 seconds
+            since = like_tweets(api, since)
+            reply_tweets(api)
+
+            check = False
+        else:
+            logger.info("Checking DMs")
+            check = True
+
+
+
+
         handle_dms(api, followers)
 
         logger.info("Waiting...")
-        time.sleep(60)
+        time.sleep(30)
 
 if __name__ == "__main__":
     main()
