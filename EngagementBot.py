@@ -37,9 +37,8 @@ def like_tweets(api, since):
 
     #might have to put a if any tweets then do this for loop
     for tweet in timeline:
-        print(f"{tweet.id} : {tweet.user.name} said {tweet.text}")
         if not tweet.favorited:
-            print("Liking Above tweet")
+            print(f"{tweet.id} : {tweet.user.name} said {tweet.text}")
             api.create_favorite(tweet.id)
         if tweet.id > since: 
             since = tweet.id
@@ -61,33 +60,26 @@ def main():
     #This is just a high number to start at that's tweet took place recently for me. You can just make this 1
     since = 1341570120687226879
     while True:
-        #only check for list of followers every minute so we can update more often, but check everything else every 30 seconds
-        if check:
-            #only do all this code every other time
-            followers = api.followers()
-            follow_followers(api, followers)
 
-            #okay so unfollow is going to be a somewhat costly method
-            #so instead of writing something better, for now I will just check if followers and following have the same number then do it if they do not
-            if check_follower_count(api):
-                unfollow_unfollowers(api, followers)
+        followers = api.followers()
 
-            #So I am also putting this in here so we can do dms every 30 seconds
-            since = like_tweets(api, since)
-            reply_tweets(api)
+        follow_followers(api, followers)
 
-            check = False
-        else:
-            logger.info("Checking DMs")
-            check = True
+        #okay so unfollow is going to be a somewhat costly method
+        #so instead of writing something better, for now I will just check if followers and following have the same number then do it if they do not
+        if check_follower_count(api):
+            unfollow_unfollowers(api, followers)
 
+        since = like_tweets(api, since)
 
+        reply_tweets(api)
 
+        logger.info("Checking DMs")
 
         handle_dms(api, followers)
 
         logger.info("Waiting...")
-        time.sleep(30)
+        time.sleep(60)
 
 if __name__ == "__main__":
     main()
