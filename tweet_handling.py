@@ -3,7 +3,6 @@ import tweepy
 import logging
 import os
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 
@@ -29,7 +28,9 @@ def like_tweets(api, since, timeline):
         if not tweet.favorited:
             print(f"{tweet.id} : {tweet.user.name} said {tweet.text}")
             api.create_favorite(tweet.id)
-        if tweet.id > since: 
+            ## check now if name is in tweet replys and get their tag
+            
+        if tweet.id > since:
             since = tweet.id
     
     return since
@@ -39,3 +40,4 @@ def reply_tweets(api, timeline):
     #here we implement replying to some tweets
     user = api.me() #This is just a filler thing here.
     #I think what I wanna do is return from the previous one tweets I liked this time and then replying to them.
+

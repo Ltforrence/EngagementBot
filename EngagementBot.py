@@ -11,15 +11,16 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 
-
 def main():
     api = create_api()
 
-    replies = get_reply_strings(api)
+    replies = get_reply_strings()
     #initialize this
     check = True
     #This is just a high number to start at that's tweet took place recently for me. You can just make this 1
     since = 1341570120687226879
+
+    reply_strings = get_reply_strings()
     while True:
 
         followers = handle_followers
