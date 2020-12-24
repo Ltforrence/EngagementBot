@@ -3,13 +3,15 @@ import tweepy
 import logging
 import os
 
-
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
 
 
 def handle_tweets(api, since):
 
     #Now changing how timeline functions. Pulling only tweets that are newer than the newest one in the previoous try
     #making the initial count 50 because all the ones after that should be lower than 50 and in case its been off for awhile this will probably grab all tweets bot missed while off.
+    #This include_rts does work which is pretty coolio
     timeline = api.home_timeline(since_id = since, count = 50, include_rts = False)
 
     since = like_tweets(api, since, timeline)
