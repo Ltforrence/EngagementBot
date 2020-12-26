@@ -3,6 +3,7 @@ This is a twitter bot made using the python library Tweepy that will give my acc
 
 I have some private docs on my local machine that I will upload to show my progress and stuff, but heres some general information
 
+All of the keys in test files are outdated. But useful to see because sometimes the name of a key from twitter is different and the format helps for identification.
 
 This is my first twitter bot. I am making it because I am bored and want to explore what is possible with the twitter API and I really want my tweets to get more likes.
 
