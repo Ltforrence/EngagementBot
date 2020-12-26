@@ -44,8 +44,9 @@ def tweet_reply_check(api, tweet, replies):
 
 def reply_tweet(api, tweet, US):
 
-    print("Would reply to user " + tweet.user.name + " with "+ US.reply_string)
-    #here we implement replying to some tweets
-    user = api.me() #This is just a filler thing here.
-    #I think what I wanna do is return from the previous one tweets I liked this time and then replying to them.
+    #print("Would reply to user " + tweet.user.name + " with "+ US.reply_string)
+    print("Replying to user: "+ tweet.user.name)
+
+    #This appears to be all you need to do in order to reply to another tweet
+    api.update_status("@"+tweet.user.screen_name+" "+US.reply_string, tweet.id)
 

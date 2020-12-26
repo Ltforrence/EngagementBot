@@ -51,18 +51,20 @@ def construct_message(dm, api, temp_user, replies):
             message = "MESSAGE: If you would like to send a message to the creator of this bot about something you want to be added or to tell him he did a great job, use this functionality by sending 'MESSAGE _______' with the blank being your message. Also, you can just message @ItBeLuke just thought this would be cooler to have"
         else:
             message = "I'm sorry I don't understand that command, please reply 'HELP' if you would like more information about my functions"
-    elif recieved_text[0:5].upper() == "REPLY":
-        greeting = recieved_text[6:]
-        if greeting == "":
-            greeting = temp_user.name
-        US = User_Settings(temp_user.id, "Great Tweet " + greeting)
-        new_string_dm(US, replies)
-        message = "Congrats! You have changed your reply message to 'Great Tweet " + recieved_text[6:] + "'"
     elif recieved_text[0:12].upper() == "REPLY STRING":
+        #These few lines are a failsafe in case a user doesn't send the correct info
         greeting = recieved_text[13:]
         if greeting == "":
             greeting = "Great tweet " + temp_user.name
         US = User_Settings(temp_user.id, recieved_text[13:])
+        new_string_dm(US, replies)
+        message = "Congrats! You have changed your reply message to 'Great Tweet " + recieved_text[6:] + "'"
+    elif recieved_text[0:5].upper() == "REPLY":
+        #These few lines are a failsafe in case a user doesn't send the correct info
+        greeting = recieved_text[6:]
+        if greeting == "":
+            greeting = temp_user.name
+        US = User_Settings(temp_user.id, "Great Tweet " + greeting)
         new_string_dm(US, replies)
         message = "Congrats! You have changed your reply message to 'Great Tweet " + recieved_text[6:] + "'"
     elif recieved_text[0:7].upper() == "MESSAGE":
@@ -72,7 +74,7 @@ def construct_message(dm, api, temp_user, replies):
         #not sure if this works for get_user, but we'll see
         send_dm(api, temp_user.screen_name+" said: '"+recieved_text[8:] +"' about your application", api.get_user("ItBeLuke"))
     elif recieved_text.upper() == "INFO":
-        message = "Currently implementing DM features of bot and REPLY. Just finished MESSAGE and cleaned up the code a bit. Will next work on REPLY and REPLY STRING"
+        message = "By the time you read this Replies should be fully implemented and you can take advantage"
     else:
         message = "I'm sorry I don't understand that command, please reply 'HELP' if you would like more information about my functions"
     #put other options here obviously in an else if
