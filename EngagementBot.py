@@ -15,21 +15,18 @@ def main():
     api = create_api()
 
     replies = get_reply_strings()
-    #initialize this
-    check = True
-    #This is just a high number to start at that's tweet took place recently for me. You can just make this 1
+    
+    #This is just a high number to start at that's tweet took place recently for me. You can just make this 1 in reality unless you are trying to pull 300 tweets first try
     since = 1341570120687226879
-
-    reply_strings = get_reply_strings()
     while True:
 
-        followers = handle_followers
+        followers = handle_followers(api)
 
-        since = handle_tweets(api, since)
+        since = handle_tweets(api, since, replies)
 
         logger.info("Checking DMs")
 
-        handle_dms(api, followers)
+        handle_dms(api, followers, replies)
 
         logger.info("Waiting...")
         time.sleep(60)
