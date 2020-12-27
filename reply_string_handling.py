@@ -82,3 +82,12 @@ def new_string_dm(US, reply_strings):
         reply_strings.append(US)
         add_reply_string(US)
 
+
+
+def remove_string_dm(temp_user, reply_strings):
+    print("Turning off replies for "+temp_user.name)
+    for us in reply_strings:
+        if us.username == temp_user.id:
+            reply_strings.remove(us)
+    
+    set_reply_strings(reply_strings)

@@ -3,7 +3,7 @@ import tweepy
 import logging
 import os
 from User_Settings import User_Settings
-from reply_string_handling import new_string_dm
+from reply_string_handling import new_string_dm, remove_string_dm
 
 
 
@@ -38,7 +38,7 @@ def construct_message(dm, api, temp_user, replies):
     recieved_text = dm.message_create['message_data']['text']
     if  recieved_text == "HELP":
         #construct help message reply
-        message = "HELP MENU\n\nMany of these functions have their own help pages e.g. HELP REPLY will return a REPLY help message.\n\nFunctions:\n\nREPLY -- Engagement Bot will reply to your tweets with simple message and a one word name of your choice\n\nREPLY STRING -- Engagement Bot will reply to your tweets with custom message you create\n\nREPLY STOP -- End and delete your current reply settings\n\nMESSAGE -- send message to Luke about issues or possible new functionality \n\nINFO -- Will give you info about bot's current progress \n\nThank you for using Luke's Engagement Bot"
+        message = "HELP MENU\n\nMany of these functions have their own help pages e.g. HELP REPLY will return a REPLY help message.\n\nFunctions:\n\nREPLY -- Engagement Bot will reply to your tweets with simple message and a one word name of your choice\n\nREPLY STRING -- Engagement Bot will reply to your tweets with custom message you create\n\nSTOP REPLY -- End and delete your current reply settings\n\nMESSAGE -- send message to Luke about issues or possible new functionality \n\nINFO -- Will give you info about bot's current progress \n\nThank you for using Luke's Engagement Bot"
     elif recieved_text[0:4].upper()=="HELP":
         #There should be a space after help so 5 onward
         if recieved_text[5:].upper()=="REPLY":
@@ -58,6 +58,9 @@ def construct_message(dm, api, temp_user, replies):
     elif recieved_text[0:6].upper()=="RT OFF":
         #Yeaaaaah so lets just change the user_settings object now...
         message = "You have turned off retweets for this account"
+    elif recieved_text[0:10].upper() == "STOP REPLY":
+        #turn off replies
+        remove_string_dm(temp_user, replies)
     elif recieved_text[0:12].upper() == "REPLY STRING":
         #These few lines are a failsafe in case a user doesn't send the correct info
         greeting = recieved_text[13:]
