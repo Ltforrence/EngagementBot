@@ -51,14 +51,21 @@ def construct_message(dm, api, temp_user, replies):
             message = "MESSAGE: If you would like to send a message to the creator of this bot about something you want to be added or to tell him he did a great job, use this functionality by sending 'MESSAGE _______' with the blank being your message. Also, you can just message @ItBeLuke just thought this would be cooler to have"
         else:
             message = "I'm sorry I don't understand that command, please reply 'HELP' if you would like more information about my functions"
+    elif recieved_text[0:5].upper()=="RT ON":
+        #In this case you should turn retweets on for this user
+        #I will need to add this to user Settings. Also will need to change the logic of how to do Replys because of this
+        message = "You have turned on retweets for this account"
+    elif recieved_text[0:6].upper()=="RT OFF":
+        #Yeaaaaah so lets just change the user_settings object now...
+        message = "You have turned off retweets for this account"
     elif recieved_text[0:12].upper() == "REPLY STRING":
         #These few lines are a failsafe in case a user doesn't send the correct info
         greeting = recieved_text[13:]
         if greeting == "":
             greeting = "Great tweet " + temp_user.name
-        US = User_Settings(temp_user.id, recieved_text[13:])
+        US = User_Settings(temp_user.id, greeting)
         new_string_dm(US, replies)
-        message = "Congrats! You have changed your reply message to 'Great Tweet " + recieved_text[6:] + "'"
+        message = "Congrats! You have changed your reply message to '" + recieved_text[13:] + "'"
     elif recieved_text[0:5].upper() == "REPLY":
         #These few lines are a failsafe in case a user doesn't send the correct info
         greeting = recieved_text[6:]

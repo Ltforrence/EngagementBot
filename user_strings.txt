@@ -1,1 +1,1 @@
-{"user_settings": [{"username": 718475920194068480, "reply_string": "Great Tweet string this is a test"}, {"username": 1129823604, "reply_string": "Great Tweet lukey"}]}
+{"user_settings": [{"username": 718475920194068480, "reply_string": "test again"}, {"username": 1129823604, "reply_string": "Great Tweet lukey"}]}
