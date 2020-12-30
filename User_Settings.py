@@ -9,7 +9,7 @@ class User_Settings:
         self.rt = rt
         self.like = like
         self.reply = reply
-        self.verified = verified #Currently all users are verified lol
+        self.verified = verified #Currently all users are verified lol. This will change as time goes on
 
     
 
