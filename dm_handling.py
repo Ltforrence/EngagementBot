@@ -44,7 +44,7 @@ def construct_message(dm, api, temp_user, replies):
         if recieved_text[5:].upper()=="REPLY":
             #need to set whatever follows this to the new reply string
             #will also have to deal with truncating the message but that is for another day
-            message = "REPLY:\nTo turn on reply messages send 'REPLY ____' with what you would like to be called as the blank. The standard reply message is 'Great Tweet _____'"
+            message = "REPLY:\nTo turn on reply messages send 'REPLY ON' the reply that will be tweeted to all of your tweets is 'Great Tweet <name>'"
         elif recieved_text[5:].upper()=="REPLY STRING":
             message = "REPLY STRING: To turn on fully custom reply messages send 'REPLY STRING ______________' with your full message as the blank. Please note you must be an authorized user to use this function."
         elif recieved_text[5:].upper()=="MESSAGE":
@@ -58,7 +58,7 @@ def construct_message(dm, api, temp_user, replies):
     elif recieved_text[0:6].upper()=="RT OFF":
         #Yeaaaaah so lets just change the user_settings object now...
         message = "You have turned off retweets for this account"
-    elif recieved_text[0:10].upper() == "STOP REPLY":
+    elif recieved_text[0:10].upper() == "REPLY OFF":
         #turn off replies
         remove_string_dm(temp_user, replies)
         message = "Replies are now turned off for your account"
@@ -70,14 +70,12 @@ def construct_message(dm, api, temp_user, replies):
         US = User_Settings(temp_user.id, greeting)
         new_string_dm(US, replies)
         message = "Congrats! You have changed your reply message to '" + recieved_text[13:] + "'"
-    elif recieved_text[0:5].upper() == "REPLY":
-        #These few lines are a failsafe in case a user doesn't send the correct info
-        greeting = recieved_text[6:]
-        if greeting == "":
-            greeting = temp_user.name
+    elif recieved_text.upper() == "REPLY ON":
+        #This is now changed to be just a standard reply because for the long run we don't want unverified users to be able to put whatever name in here
+        greeting = temp_user.name
         US = User_Settings(temp_user.id, "Great Tweet " + greeting)
         new_string_dm(US, replies)
-        message = "Congrats! You have changed your reply message to 'Great Tweet " + recieved_text[6:] + "'"
+        message = "Congrats! You have changed your reply message to 'Great Tweet " + greeting + "'"
     elif recieved_text[0:7].upper() == "MESSAGE":
         #okay so I will just have this write to a text file with all the info of this. Maybe it will just write a json object of this message, but for now I will just have it do nothing
         message = "Thank you for your message, \""+recieved_text[8:]+"\" will be sent to the creator of this bot"
