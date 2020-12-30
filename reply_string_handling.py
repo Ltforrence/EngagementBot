@@ -14,12 +14,16 @@ logger = logging.getLogger()
 def get_reply_strings():
     
     reply_strings = []
+    reply_dict = {}
     print("Getting Reply strings")
     try:
         with open('user_strings.txt') as json_file:
             data = json.load(json_file)
             for u in data['user_settings']:
+                #This is how I am gonna do it from now on I think! I just need to change it everywhere to use this dict instead, then we will have O(1) searching which will make life 100x easier for the future!!
+                reply_dict[u['username']] = User_Settings(u['username'], u['reply_string'], u['rt'], u['like'], u['reply'])
                 reply_strings.append(User_Settings(u['username'], u['reply_string'], u['rt'], u['like'], u['reply']))
+                print(reply_dict[u['username']].username)
     except:
         print("File Empty")
     finally:
