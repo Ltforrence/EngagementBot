@@ -2,9 +2,13 @@
 #May add more values as they become relevant, but for now we only have 2
 
 class User_Settings:
-    def __init__(self, username, reply_string):
+    def __init__(self, username, reply_string, rt = 0, like = 1, reply = 1):
         self.username = username
         self.reply_string = reply_string
+        self.rt = rt
+        self.like = like
+        self.reply = reply
+
     
 
     #If ths user changes their reply string

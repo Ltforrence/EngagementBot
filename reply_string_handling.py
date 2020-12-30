@@ -12,7 +12,6 @@ logger = logging.getLogger()
 #This will be called at the beginning of the program running each time
 #For now this will return an array until I can think of a better data structure to user. More proving concept here
 def get_reply_strings():
-
     
     reply_strings = []
     print("Getting Reply strings")
@@ -20,7 +19,7 @@ def get_reply_strings():
         with open('user_strings.txt') as json_file:
             data = json.load(json_file)
             for u in data['user_settings']:
-                reply_strings.append(User_Settings(u['username'], u['reply_string']))
+                reply_strings.append(User_Settings(u['username'], u['reply_string'], u['rt'], u['like'], u['reply']))
     except:
         print("File Empty")
     finally:
@@ -38,7 +37,10 @@ def set_reply_strings(reply_strings):
     for u in reply_strings:
         data['user_settings'].append({
             'username' : u.username,
-            'reply_string' : u.reply_string
+            'reply_string' : u.reply_string,
+            'rt': u.rt,
+            'like': u.like,
+            'reply': u.reply
         })
 
 
@@ -50,6 +52,7 @@ def set_reply_strings(reply_strings):
 #Will likely not have to use the above method if this one works out(well I will still call it if someone is editing their reply string)
 #This could totally just not work too, I may have to read in the file first then write the whole thing back? not sure how json files exactly look? We will see
 #This should just append though ideally
+#This does not work! We will no longer call it!
 def add_reply_string(US):
     print("Adding new Reply String")
     data = {}
@@ -71,23 +74,26 @@ def new_string_dm(US, reply_strings):
         for u in reply_strings:
             #If they have the same username, then set it to the new User_Settings object. I believe this will work, but testing is needed
             if u.username == US.username:
-                reply_strings[i] = US
+                reply_strings[i].reply_string = US.reply_string #no longer changing this to be the new object because it will cause issues as we add more settings to these objects
+                reply_strings[i].reply = 1
                 set_reply_strings(reply_strings)
                 found = True
-        i = i+1
+            i = i+1
         if not found:
             reply_strings.append(US)
-            add_reply_string(US)
+            set_reply_strings(reply_strings)
     else:
         reply_strings.append(US)
-        add_reply_string(US)
+        set_reply_strings(reply_strings)
 
 
 
 def remove_string_dm(temp_user, reply_strings):
     print("Turning off replies for "+temp_user.name)
+    i = 0
     for us in reply_strings:
         if us.username == temp_user.id:
-            reply_strings.remove(us)
+            reply_strings[i].reply = 0
+        i = i+1
     
     set_reply_strings(reply_strings)

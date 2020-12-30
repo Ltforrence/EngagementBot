@@ -36,7 +36,7 @@ def like_tweets(api, since, timeline, replies):
 #In this method we will check the user to see if that user has replies turned on
 def tweet_reply_check(api, tweet, replies):
     for us in replies:
-        if tweet.user.id == us.username:
+        if tweet.user.id == us.username and us.reply == 1:
             reply_tweet(api, tweet, us)
     #If never returned true, return false
     return False

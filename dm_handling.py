@@ -61,6 +61,7 @@ def construct_message(dm, api, temp_user, replies):
     elif recieved_text[0:10].upper() == "STOP REPLY":
         #turn off replies
         remove_string_dm(temp_user, replies)
+        message = "Replies are now turned off for your account"
     elif recieved_text[0:12].upper() == "REPLY STRING":
         #These few lines are a failsafe in case a user doesn't send the correct info
         greeting = recieved_text[13:]
