@@ -7,7 +7,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 
-def handle_followers(api):
+def handle_followers(api, settings):
     followers = api.followers()
 
     follow_followers(api, followers)

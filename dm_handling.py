@@ -15,7 +15,7 @@ logger = logging.getLogger()
 
 
 
-def handle_dms(api, followers, replies):
+def handle_dms(api, followers, settings):
     #This method will take all dms from the past 30 days read them and respond to them accordingly then delete them from my interface
     #if dm is HELP then it will give it instructions on what it can do. I will handle that first
     DMs = api.list_direct_messages()
@@ -25,12 +25,12 @@ def handle_dms(api, followers, replies):
         temp_user = api.get_user(dm.message_create['sender_id'])
         if temp_user in followers:
             #reply to them
-            message = construct_message(dm, api, temp_user, replies)
+            message = construct_message(dm, api, temp_user, settings)
             send_dm(api, message, temp_user)
         #Then delete the message. I think this only deletes it for the bot. thats what the documentation seemed to indicate, but we will see
         api.destroy_direct_message(dm.id)
 
-def construct_message(dm, api, temp_user, replies):
+def construct_message(dm, api, temp_user, settings):
     #So this message will then interpret the message that was received and send one back
     #for now we will only handle the help command
 
@@ -60,7 +60,7 @@ def construct_message(dm, api, temp_user, replies):
         message = "You have turned off retweets for this account"
     elif recieved_text[0:10].upper() == "REPLY OFF":
         #turn off replies
-        remove_string_dm(temp_user, replies)
+        remove_string_dm(temp_user, settings)
         message = "Replies are now turned off for your account"
     elif recieved_text[0:12].upper() == "REPLY STRING":
         #These few lines are a failsafe in case a user doesn't send the correct info
@@ -68,13 +68,13 @@ def construct_message(dm, api, temp_user, replies):
         if greeting == "":
             greeting = "Great tweet " + temp_user.name
         US = User_Settings(temp_user.id, greeting)
-        new_string_dm(US, replies)
+        new_string_dm(US, settings)
         message = "Congrats! You have changed your reply message to '" + recieved_text[13:] + "'"
     elif recieved_text.upper() == "REPLY ON":
         #This is now changed to be just a standard reply because for the long run we don't want unverified users to be able to put whatever name in here
         greeting = temp_user.name
         US = User_Settings(temp_user.id, "Great Tweet " + greeting)
-        new_string_dm(US, replies)
+        new_string_dm(US, settings)
         message = "Congrats! You have changed your reply message to 'Great Tweet " + greeting + "'"
     elif recieved_text[0:7].upper() == "MESSAGE":
         #okay so I will just have this write to a text file with all the info of this. Maybe it will just write a json object of this message, but for now I will just have it do nothing
