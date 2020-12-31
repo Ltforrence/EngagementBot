@@ -3,7 +3,7 @@ import tweepy
 import logging
 import os
 from User_Settings import User_Settings
-from reply_string_handling import new_string_dm, remove_string_dm
+from reply_string_handling import new_string_dm, remove_string_dm, set_user_settings
 
 
 
@@ -36,7 +36,7 @@ def construct_message(dm, api, temp_user, settings):
 
     message = ""
     recieved_text = dm.message_create['message_data']['text']
-    if  recieved_text == "HELP":
+    if  recieved_text.upper() == "HELP":
         #construct help message reply
         message = "HELP MENU\n\nMany of these functions have their own help pages e.g. HELP REPLY will return a REPLY help message.\n\nFunctions:\n\nREPLY -- Engagement Bot will reply to your tweets with simple message and a one word name of your choice\n\nREPLY STRING -- Engagement Bot will reply to your tweets with custom message you create\n\nSTOP REPLY -- End and delete your current reply settings\n\nMESSAGE -- send message to Luke about issues or possible new functionality \n\nINFO -- Will give you info about bot's current progress \n\nThank you for using Luke's Engagement Bot"
     elif recieved_text[0:4].upper()=="HELP":
@@ -51,10 +51,21 @@ def construct_message(dm, api, temp_user, settings):
             message = "MESSAGE: If you would like to send a message to the creator of this bot about something you want to be added or to tell him he did a great job, use this functionality by sending 'MESSAGE _______' with the blank being your message. Also, you can just message @ItBeLuke just thought this would be cooler to have"
         else:
             message = "I'm sorry I don't understand that command, please reply 'HELP' if you would like more information about my functions"
-    elif recieved_text[0:5].upper()=="RT ON":
-        #In this case you should turn retweets on for this user
+    elif recieved_text[0:7].upper()=="LIKE ON":
+        settings[temp_user.id].like = 1
+        set_user_settings(settings)
+        #In this case you should turn likes on for this user
         #I will need to add this to user Settings. Also will need to change the logic of how to do Replys because of this
-        message = "You have turned on retweets for this account"
+        message = "You have turned on likes for this account"
+    elif recieved_text[0:8].upper()=="LIKE OFF":
+        #Yeaaaaah so lets just change the user_settings object now...
+        settings[temp_user.id].like = 0
+        set_user_settings(settings)
+        message = "You have turned off likes for this account"
+    elif recieved_text[0:10].upper() == "REPLY OFF":
+        #turn off replies
+        remove_string_dm(temp_user, settings)
+        message = "Replies are now turned off for your account"
     elif recieved_text[0:6].upper()=="RT OFF":
         #Yeaaaaah so lets just change the user_settings object now...
         message = "You have turned off retweets for this account"
