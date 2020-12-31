@@ -3,7 +3,7 @@ import tweepy
 import logging
 import os
 from User_Settings import User_Settings
-from reply_string_handling import new_string_dm, remove_string_dm, set_user_settings, user_like_off, user_like_on, user_rt_off, user_rt_on
+from reply_string_handling import new_user_reply, user_reply_off, set_user_settings, user_like_off, user_like_on, user_rt_off, user_rt_on
 
 #This file is the worst.
 #For this I am truly sorry
@@ -50,7 +50,7 @@ def construct_message(dm, api, temp_user, settings):
         if recieved_text[5:].upper()=="REPLY":
             #need to set whatever follows this to the new reply string
             #will also have to deal with truncating the message but that is for another day
-            message = "REPLY:\nTo turn on reply messages send 'REPLY ON' the reply that will be tweeted to all of your tweets is 'Great Tweet <name>'"
+            message = "REPLY:\nTo turn on reply messages send 'REPLY ON' the reply that will be tweeted to all of your tweets is 'Great Tweet <name>'\n\nTo turn reply tweets off, send REPLY OFF."
         elif recieved_text[5:].upper()=="REPLY STRING":
             message = "REPLY STRING: To turn on fully custom reply messages send 'REPLY STRING ______________' with your full message as the blank. Please note you must be an authorized user to use this function."
         elif recieved_text[5:].upper()=="MESSAGE":
@@ -69,15 +69,16 @@ def construct_message(dm, api, temp_user, settings):
         message = user_like_off(temp_user, settings)
 
 
+    elif recieved_text.upper() == "REPLY ON":
+        #This is now changed to be just a standard reply because for the long run we don't want unverified users to be able to put whatever name in here
+        greeting = "Great Tweet " + temp_user.name
+        new_user_reply(temp_user, greeting, settings)
+        message = "Congrats! You have changed your reply message to 'Great Tweet " + greeting + "'"
+
+
     elif recieved_text[0:10].upper() == "REPLY OFF":
         #turn off replies
-        remove_string_dm(temp_user, settings)
-        message = "Replies are now turned off for your account"
-
-
-    elif recieved_text[0:6].upper()=="RT OFF":
-        #turn off retweets
-        message = user_rt_off(temp_user, settings)
+        message = user_reply_off(temp_user, settings)
 
 
     elif recieved_text[0:10].upper() == "RT ON":
@@ -85,22 +86,18 @@ def construct_message(dm, api, temp_user, settings):
         message = user_rt_on(temp_user, settings)
 
 
+    elif recieved_text[0:6].upper()=="RT OFF":
+        #turn off retweets
+        message = user_rt_off(temp_user, settings)
+
+
     elif recieved_text[0:12].upper() == "REPLY STRING":
         #These few lines are a failsafe in case a user doesn't send the correct info
         greeting = recieved_text[13:]
         if greeting == "":
             greeting = "Great tweet " + temp_user.name
-        US = User_Settings(temp_user.id, greeting)
-        new_string_dm(US, settings)
+        new_user_reply(temp_user, greeting, settings)
         message = "Congrats! You have changed your reply message to '" + recieved_text[13:] + "'"
-
-
-    elif recieved_text.upper() == "REPLY ON":
-        #This is now changed to be just a standard reply because for the long run we don't want unverified users to be able to put whatever name in here
-        greeting = temp_user.name
-        US = User_Settings(temp_user.id, "Great Tweet " + greeting)
-        new_string_dm(US, settings)
-        message = "Congrats! You have changed your reply message to 'Great Tweet " + greeting + "'"
 
 
     elif recieved_text[0:7].upper() == "MESSAGE":
@@ -112,7 +109,7 @@ def construct_message(dm, api, temp_user, settings):
 
 
     elif recieved_text.upper() == "INFO":
-        message = "By the time you read this Replies should be fully implemented and you can take advantage"
+        message = "Replies are fully implemented. Trying to make a user_settings object for everyone. Likes/Retweets ON/OFF are also implemented, but will not work until you have at some point turned on Replies lol\nI know this is silly, but soon that will be fixed. That is my next project"
 
 
     else:
