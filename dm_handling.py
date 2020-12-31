@@ -3,9 +3,11 @@ import tweepy
 import logging
 import os
 from User_Settings import User_Settings
-from reply_string_handling import new_string_dm, remove_string_dm, set_user_settings
+from reply_string_handling import new_string_dm, remove_string_dm, set_user_settings, user_like_off, user_like_on, user_rt_off, user_rt_on
 
-
+#This file is the worst.
+#For this I am truly sorry
+#It is my greatest sin
 
 #This is for showing logs of success to the console
 logger = logging.getLogger()
@@ -30,6 +32,8 @@ def handle_dms(api, followers, settings):
         #Then delete the message. I think this only deletes it for the bot. thats what the documentation seemed to indicate, but we will see
         api.destroy_direct_message(dm.id)
 
+
+
 def construct_message(dm, api, temp_user, settings):
     #So this message will then interpret the message that was received and send one back
     #for now we will only handle the help command
@@ -38,7 +42,9 @@ def construct_message(dm, api, temp_user, settings):
     recieved_text = dm.message_create['message_data']['text']
     if  recieved_text.upper() == "HELP":
         #construct help message reply
-        message = "HELP MENU\n\nMany of these functions have their own help pages e.g. HELP REPLY will return a REPLY help message.\n\nFunctions:\n\nREPLY -- Engagement Bot will reply to your tweets with simple message and a one word name of your choice\n\nREPLY STRING -- Engagement Bot will reply to your tweets with custom message you create\n\nSTOP REPLY -- End and delete your current reply settings\n\nMESSAGE -- send message to Luke about issues or possible new functionality \n\nINFO -- Will give you info about bot's current progress \n\nThank you for using Luke's Engagement Bot"
+        message = "HELP MENU\n\nMany of these functions have their own help pages e.g. HELP REPLY will return a REPLY help message.\n\nFunctions:\n\nREPLY ON-- Engagement Bot will reply to your tweets with simple message and your current screen name!\n\nREPLY STRING -- Engagement Bot will reply to your tweets with custom message you create\n\REPLY OFF -- End and delete your current reply settings\nLIKE ON/OFF -- Will turn on or off the feature that EngagementBot likes all of your tweets\nRT ON/OFF -- Will turn on or off the feature that has EngagementBot retweet all your tweets\n\nMESSAGE -- send message to Luke about issues or possible new functionality \n\nINFO -- Will give you info about bot's current progress \n\nThank you for using Luke's Engagement Bot"
+
+
     elif recieved_text[0:4].upper()=="HELP":
         #There should be a space after help so 5 onward
         if recieved_text[5:].upper()=="REPLY":
@@ -51,28 +57,34 @@ def construct_message(dm, api, temp_user, settings):
             message = "MESSAGE: If you would like to send a message to the creator of this bot about something you want to be added or to tell him he did a great job, use this functionality by sending 'MESSAGE _______' with the blank being your message. Also, you can just message @ItBeLuke just thought this would be cooler to have"
         else:
             message = "I'm sorry I don't understand that command, please reply 'HELP' if you would like more information about my functions"
+
+
     elif recieved_text[0:7].upper()=="LIKE ON":
-        settings[temp_user.id].like = 1
-        set_user_settings(settings)
-        #In this case you should turn likes on for this user
-        #I will need to add this to user Settings. Also will need to change the logic of how to do Replys because of this
-        message = "You have turned on likes for this account"
+        #yay we did it this looks okay!
+        message = user_like_on(temp_user, settings)
+
+
     elif recieved_text[0:8].upper()=="LIKE OFF":
         #Yeaaaaah so lets just change the user_settings object now...
-        settings[temp_user.id].like = 0
-        set_user_settings(settings)
-        message = "You have turned off likes for this account"
+        message = user_like_off(temp_user, settings)
+
+
     elif recieved_text[0:10].upper() == "REPLY OFF":
         #turn off replies
         remove_string_dm(temp_user, settings)
         message = "Replies are now turned off for your account"
+
+
     elif recieved_text[0:6].upper()=="RT OFF":
-        #Yeaaaaah so lets just change the user_settings object now...
-        message = "You have turned off retweets for this account"
-    elif recieved_text[0:10].upper() == "REPLY OFF":
-        #turn off replies
-        remove_string_dm(temp_user, settings)
-        message = "Replies are now turned off for your account"
+        #turn off retweets
+        message = user_rt_off(temp_user, settings)
+
+
+    elif recieved_text[0:10].upper() == "RT ON":
+        #turn on retweets
+        message = user_rt_on(temp_user, settings)
+
+
     elif recieved_text[0:12].upper() == "REPLY STRING":
         #These few lines are a failsafe in case a user doesn't send the correct info
         greeting = recieved_text[13:]
@@ -81,22 +93,32 @@ def construct_message(dm, api, temp_user, settings):
         US = User_Settings(temp_user.id, greeting)
         new_string_dm(US, settings)
         message = "Congrats! You have changed your reply message to '" + recieved_text[13:] + "'"
+
+
     elif recieved_text.upper() == "REPLY ON":
         #This is now changed to be just a standard reply because for the long run we don't want unverified users to be able to put whatever name in here
         greeting = temp_user.name
         US = User_Settings(temp_user.id, "Great Tweet " + greeting)
         new_string_dm(US, settings)
         message = "Congrats! You have changed your reply message to 'Great Tweet " + greeting + "'"
+
+
     elif recieved_text[0:7].upper() == "MESSAGE":
         #okay so I will just have this write to a text file with all the info of this. Maybe it will just write a json object of this message, but for now I will just have it do nothing
         message = "Thank you for your message, \""+recieved_text[8:]+"\" will be sent to the creator of this bot"
         #oh shit I could just have this dm me lol. I will do that it will be way easier than just creating a text file of stuff. I will just do another call to 
         #not sure if this works for get_user, but we'll see
         send_dm(api, temp_user.screen_name+" said: '"+recieved_text[8:] +"' about your application", api.get_user("ItBeLuke"))
+
+
     elif recieved_text.upper() == "INFO":
         message = "By the time you read this Replies should be fully implemented and you can take advantage"
+
+
     else:
         message = "I'm sorry I don't understand that command, please reply 'HELP' if you would like more information about my functions"
+
+        
     #put other options here obviously in an else if
     #if there was a message as in if it fit any of the options send the message back to sender. Otherwise do nothing
     return message
