@@ -1,4 +1,7 @@
 # EngagementBot
+LOL looks like I left up my real keys by mistake! someone tweeted with this thing. I was very dumb thought I had changed them since I posted this stuff!!!!!! well now the keys you see won't work for sure
+
+
 This is a twitter bot made using the python library Tweepy that will give my account some more engagement as a bit.
 
 I have some private docs on my local machine that I will upload to show my progress and stuff, but heres some general information
