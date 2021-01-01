@@ -5,6 +5,9 @@ LOL looks like I left up my real keys by mistake! someone tweeted with this thin
 Looking to add sql or other database backing soon! That is my next big goal here really
 
 
+Also, if you were looking at this and did that tweet, let me know! I feel stupid and want to know about it
+
+
 This is a twitter bot made using the python library Tweepy that will give my account some more engagement as a bit.
 
 I have some private docs on my local machine that I will upload to show my progress and stuff, but heres some general information
