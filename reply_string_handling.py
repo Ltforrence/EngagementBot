@@ -58,10 +58,15 @@ def set_user_settings(settings_dict):
 def new_user_reply(temp_user, greeting, settings_dict):
     #This should be a nice new streamlined version of this method
     if temp_user.id in settings_dict.keys(): #need to add if already on send reply I am too tired
-        settings_dict[temp_user.id].reply = 1
-        settings_dict[temp_user.id].reply_string = greeting
+        if settings_dict[temp_user.id].reply == 0:
+            settings_dict[temp_user.id].reply = 1
+            settings_dict[temp_user.id].reply_string = greeting
+            return "Replies have been successfully turned on for your account. '"+greeting+ "' will be sent to your account after each tweet"
+        else:
+            return "Replies were already on for you account. If this is not the case please use our MESSAGE feature so EngagementBot can get better"
     else:
         settings_dict[temp_user.id] = User_Settings(temp_user.id, greeting, 0, 1, 1, 1) # again for now, we will assume that users don't automatically have user_settings objects stored anywhere and that they are all verified immediately
+        return "Replies have been successfully turned on for your account. '"+greeting+ "' will be sent to your account after each tweet"
     
     set_user_settings(settings_dict)
 
@@ -78,8 +83,9 @@ def user_reply_off(temp_user, settings_dict):
         else:
             return "Replies were already off for you account. If this is not the case please use our MESSAGE feature so EngagementBot can get better"
     else:
+        settings_dict[temp_user.id] = User_Settings(temp_user.id, "", 1, 0, 1)
         #probably if this happens I would like to recieve an error message with the details of this lol. I will set this up later. It will just store it to an error logs of my sql database when I set it up
-        return "You do not have a Settings profile with us. Either there has been an issue or you do not yet follow us. If there is an issue, please contact us with the issue using the MESSAGE function.\nThank you!"    
+        return "Replies were already off for you account. If this is not the case please use our MESSAGE feature so EngagementBot can get better"
     
 
 
@@ -131,4 +137,5 @@ def user_rt_on(temp_user, settings_dict):
         else: #likes were already off for this user
             return "Retweets were already turned on for your account! If this is not the case please use our MESSAGE feature so EngagementBot can get better"
     else: #if we hit this then the user either does not follow or we have an issue (This issue could be caused by them being grandfathered into our current system (this will be fixed))
+
         return "You do not have a Settings profile with us. Either there has been an issue or you do not yet follow us. If there is an issue, please contact us with the issue using the MESSAGE function"
