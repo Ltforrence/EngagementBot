@@ -11,7 +11,6 @@ def handle_followers(api, settings):
     followers = api.followers()
 
     follow_followers(api, followers)
-
         #okay so unfollow is going to be a somewhat costly method
         #so instead of writing something better, for now I will just check if followers and following have the same number then do it if they do not
     if check_follower_count(api):

@@ -57,11 +57,11 @@ def set_user_settings(settings_dict):
 #This method will check if the user already exists in the reply strings. If they do we write all of it again. If a new one then we just do add_reply_string if already exists, do set_reply_strings
 def new_user_reply(temp_user, greeting, settings_dict):
     #This should be a nice new streamlined version of this method
-    if temp_user.id in settings_dict.keys():
-        settings_dict[US.username].reply = 1
-        settings_dict[US.username].reply_string = greeting
+    if temp_user.id in settings_dict.keys(): #need to add if already on send reply I am too tired
+        settings_dict[temp_user.id].reply = 1
+        settings_dict[temp_user.id].reply_string = greeting
     else:
-        settings_dict[US.username] = User_Settings(temp_user.id, greeting, 0, 1, 1, 1) # again for now, we will assume that users don't automatically have user_settings objects stored anywhere and that they are all verified immediately
+        settings_dict[temp_user.id] = User_Settings(temp_user.id, greeting, 0, 1, 1, 1) # again for now, we will assume that users don't automatically have user_settings objects stored anywhere and that they are all verified immediately
     
     set_user_settings(settings_dict)
 

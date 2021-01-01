@@ -11,7 +11,7 @@ def handle_tweets(api, since, settings):
     #Now changing how timeline functions. Pulling only tweets that are newer than the newest one in the previoous try
     #making the initial count 50 because all the ones after that should be lower than 50 and in case its been off for awhile this will probably grab all tweets bot missed while off.
     #This include_rts does work which is pretty coolio
-    timeline = api.home_timeline(since_id = since, count = 50, include_rts = False)
+    timeline = api.home_timeline(since_id = since, count = 50, include_rts = False, exclude_replies=False)
 
     since = like_tweets(api, since, timeline, settings)
 
@@ -43,7 +43,12 @@ def like_tweets(api, since, timeline, settings):
 def tweet_reply_check(api, tweet, settings):
     if tweet.user.id in settings.keys():
         if settings[tweet.user.id].reply == 1:
-            reply_tweet(api, tweet, settings[tweet.user.id])
+            try:
+                reply_tweet(api, tweet, settings[tweet.user.id])
+            except tweepy.error.TweepError as e:
+                print(e) #The really only error we can get here is duplicate status error I think, but I will probably also send this to my error logs!
+            except:
+                print("not sure what went wrong")
 
 
 def reply_tweet(api, tweet, US):
