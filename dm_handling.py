@@ -73,7 +73,7 @@ def construct_message(dm, api, temp_user, settings):
         #This is now changed to be just a standard reply because for the long run we don't want unverified users to be able to put whatever name in here
         greeting = "Great Tweet " + temp_user.name
         new_user_reply(temp_user, greeting, settings)
-        message = "Congrats! You have changed your reply message to 'Great Tweet " + greeting + "'"
+        message = "Congrats! You have changed your reply message to '" + greeting + "'"
 
 
     elif recieved_text[0:10].upper() == "REPLY OFF":

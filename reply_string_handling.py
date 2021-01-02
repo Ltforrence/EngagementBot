@@ -61,6 +61,7 @@ def new_user_reply(temp_user, greeting, settings_dict):
         if settings_dict[temp_user.id].reply == 0:
             settings_dict[temp_user.id].reply = 1
             settings_dict[temp_user.id].reply_string = greeting
+            set_user_settings(settings_dict)
             return "Replies have been successfully turned on for your account. '"+greeting+ "' will be sent to your account after each tweet"
         else:
             return "Replies were already on for you account. If this is not the case please use our MESSAGE feature so EngagementBot can get better"
@@ -149,6 +150,14 @@ def new_user_settings(temp_user, settings_dict):
         #Then add it
         settings_dict[temp_user.id] = User_Settings(temp_user.id, "", 0, 1, 0, 1)
         set_user_settings(settings_dict)
+
+def del_user_settings(temp_user, settings_dict):
+    #This code is to be used if a user unfollows
+    if temp_user.id in settings_dict.keys():
+        #will print something to change logs here and maybe terminal??? That will be later though
+        del settings_dict[temp_user.id]
+        set_user_settings(settings_dict)
+        print("Deleting user, "+temp_user.name+", who unfollowed you, from user settings")
 
 
 #Here are the two methods for writing to and reading from the since file

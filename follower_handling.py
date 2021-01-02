@@ -2,7 +2,7 @@
 import tweepy
 import logging
 import time
-from reply_string_handling import new_user_settings
+from reply_string_handling import new_user_settings, del_user_settings
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -15,23 +15,24 @@ def handle_followers(api, settings):
         #okay so unfollow is going to be a somewhat costly method
         #so instead of writing something better, for now I will just check if followers and following have the same number then do it if they do not
     if check_follower_count(api):
-        unfollow_unfollowers(api, followers)
+        unfollow_unfollowers(api, followers, settings)
 
     return followers
 
 def follow_followers(api, followers, settings):
     logger.info("Retrieving and following followers")
     for follower in followers:
-        new_user_settings(follower, settings)
         if not follower.following:
+            new_user_settings(follower, settings) #if following for the first time create a user_settings object for them
             logger.info(f"Following {follower.name}")
             follower.follow()
 
-def unfollow_unfollowers(api, followers):
+def unfollow_unfollowers(api, followers, settings):
     logger.info("Retrieving and unfollowing unfollowers")
     for followling in tweepy.Cursor(api.friends).items():   
         #instead of making an api call here I will just crosscheck a list of 
         if not followling in followers:
+            del_user_settings(followling, settings)
             logger.info(f"unfollowing {followling.name}")
             api.destroy_friendship(followling.id_str)
 
