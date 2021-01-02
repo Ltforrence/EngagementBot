@@ -2,6 +2,7 @@
 import tweepy
 import logging
 import time
+from reply_string_handling import new_user_settings
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -10,7 +11,7 @@ logger = logging.getLogger()
 def handle_followers(api, settings):
     followers = api.followers()
 
-    follow_followers(api, followers)
+    follow_followers(api, followers, settings)
         #okay so unfollow is going to be a somewhat costly method
         #so instead of writing something better, for now I will just check if followers and following have the same number then do it if they do not
     if check_follower_count(api):
@@ -18,9 +19,10 @@ def handle_followers(api, settings):
 
     return followers
 
-def follow_followers(api, followers):
+def follow_followers(api, followers, settings):
     logger.info("Retrieving and following followers")
     for follower in followers:
+        new_user_settings(follower, settings)
         if not follower.following:
             logger.info(f"Following {follower.name}")
             follower.follow()

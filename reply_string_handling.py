@@ -141,6 +141,17 @@ def user_rt_on(temp_user, settings_dict):
         return "You do not have a Settings profile with us. Either there has been an issue or you do not yet follow us. If there is an issue, please contact us with the issue using the MESSAGE function"
 
 
+#This is a temporary method to bootstrap all of the users without reply strings
+def new_user_settings(temp_user, settings_dict):
+    #we will use this if we get a new follower in the future
+    if not (temp_user.id in settings_dict.keys()):
+        print("adding new user "+temp_user.name)
+        #Then add it
+        settings_dict[temp_user.id] = User_Settings(temp_user.id, "", 0, 1, 0, 1)
+        set_user_settings(settings_dict)
+
+
+#Here are the two methods for writing to and reading from the since file
 
 def get_since_id():
     print("Getting since ID")
@@ -153,4 +164,3 @@ def set_since_id(since):
     print("Setting since ID")
     with open("since.txt",'w') as since_file:
         since_file.write(str(since))
-    #here we will write to that file!
