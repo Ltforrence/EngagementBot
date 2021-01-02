@@ -139,3 +139,18 @@ def user_rt_on(temp_user, settings_dict):
     else: #if we hit this then the user either does not follow or we have an issue (This issue could be caused by them being grandfathered into our current system (this will be fixed))
 
         return "You do not have a Settings profile with us. Either there has been an issue or you do not yet follow us. If there is an issue, please contact us with the issue using the MESSAGE function"
+
+
+
+def get_since_id():
+    print("Getting since ID")
+    #here were gonna read from and write to a file!
+    with open("since.txt", 'r') as since_file:
+        return int(since_file.read())
+
+
+def set_since_id(since):
+    print("Setting since ID")
+    with open("since.txt",'w') as since_file:
+        since_file.write(str(since))
+    #here we will write to that file!

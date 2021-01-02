@@ -3,7 +3,7 @@ import logging
 from config import create_api
 from dm_handling import handle_dms
 from tweet_handling import handle_tweets
-from reply_string_handling import get_user_settings
+from reply_string_handling import get_user_settings, get_since_id, set_since_id
 from follower_handling import handle_followers
 import time
 
@@ -16,8 +16,8 @@ def main():
 
     settings = get_user_settings()
 
-    #This is just a high number to start at that's tweet took place recently for me. You can just make this 1 in reality unless you are trying to pull 300 tweets first try
-    since = 1341570120687226879
+    #Now because we have to lol, we are gonna get and set this every time it changes in a file
+    since = get_since_id()
     while True:
         logger.info("Checking Followers")
         followers = handle_followers(api, settings)

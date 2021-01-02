@@ -2,6 +2,7 @@
 import tweepy
 import logging
 import os
+from reply_string_handling import set_since_id
 
 logger = logging.getLogger()
 
@@ -36,6 +37,7 @@ def like_tweets(api, since, timeline, settings):
             ## check now if name is in tweet replys and get their tag
         if tweet.id > since:
             since = tweet.id
+            set_since_id(since)
     
     return since
 
