@@ -65,11 +65,9 @@ def new_user_reply(temp_user, greeting, settings_dict):
             return "Replies have been successfully turned on for your account. '"+greeting+ "' will be sent to your account after each tweet"
         else:
             return "Replies were already on for you account. If this is not the case please use our MESSAGE feature so EngagementBot can get better"
-    else:
-        settings_dict[temp_user.id] = User_Settings(temp_user.id, greeting, 0, 1, 1, 1) # again for now, we will assume that users don't automatically have user_settings objects stored anywhere and that they are all verified immediately
-        return "Replies have been successfully turned on for your account. '"+greeting+ "' will be sent to your account after each tweet"
+    else: #now we assume everyone has a profile and there is an issue if not. We should post to error logging now
+        return "You do not have a Settings profile with us. Either there has been an issue or you do not yet follow us. If there is an issue, please contact us with the issue using the MESSAGE function.\nThank you!"
     
-    set_user_settings(settings_dict)
 
 
 
@@ -83,10 +81,9 @@ def user_reply_off(temp_user, settings_dict):
             return "Replies have been successfully turned off for your account"
         else:
             return "Replies were already off for you account. If this is not the case please use our MESSAGE feature so EngagementBot can get better"
-    else:
-        settings_dict[temp_user.id] = User_Settings(temp_user.id, "", 1, 0, 1)
+    else: #no longer should we make a new profile, because everyone should have a profile if they get to this step!!!! 
         #probably if this happens I would like to recieve an error message with the details of this lol. I will set this up later. It will just store it to an error logs of my sql database when I set it up
-        return "Replies were already off for you account. If this is not the case please use our MESSAGE feature so EngagementBot can get better"
+        return "You do not have a Settings profile with us. Either there has been an issue or you do not yet follow us. If there is an issue, please contact us with the issue using the MESSAGE function.\nThank you!"
     
 
 
