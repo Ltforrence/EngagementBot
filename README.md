@@ -2,7 +2,7 @@
 
 ### Current Progress
 My next goals for this are add database backing and to then host it somewhere. All of my initial feature goals have been implemented and then some. You can see current functionality by dming it @EngagementBot
-After it is hosted I will add some more DM functionality and 
+After it is hosted I will add some more DM functionality and add real tests for any new functionality
 
 Also, if you were looking at this a few days ago, I have now changed my keys for sure so unless something else is messed up you should not be able to use it. Not sure how they were uploaded last time. I thought they had been changed. But, thanks for notifying me!
 
