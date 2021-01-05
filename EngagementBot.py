@@ -1,6 +1,6 @@
 import tweepy
 import logging
-from config import create_api
+from config import create_api, connect_db, get_db_cursor
 from dm_handling import handle_dms
 from tweet_handling import handle_tweets
 from reply_string_handling import get_user_settings, get_since_id, set_since_id
@@ -13,6 +13,10 @@ logger = logging.getLogger()
 
 def main():
     api = create_api()
+
+    ##The new code order coming in right here baby
+    mydb = connect_db()
+    mycursor = get_db_cursor(mydb)
 
     settings = get_user_settings()
 

@@ -2,7 +2,7 @@
 import tweepy
 import logging
 import os
-
+import mysql.connector
 
 
 #This is for showing logs of success to the console
@@ -28,3 +28,23 @@ def create_api():
         raise e
     logger.info("API created")
     return api
+
+
+
+
+def connect_db():
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        passwd= os.getenv("ROOT_PASSWORD"),
+        database="engagementbot"
+    )
+    return mydb
+
+
+#Putthing these in two different methods because I have to??? Not really sure if I need to even have this in config. Could get away with putting it elsewhere
+def get_db_cursor(mydb):
+    mycursor = mydb.cursor()
+
+    return mycursor
+    

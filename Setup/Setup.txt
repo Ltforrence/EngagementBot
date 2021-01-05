@@ -1,0 +1,29 @@
+### Setup Doc
+I would just like to have this here to allow an easier flow of info here. I have a lot of different folders in my github that are likely confusing
+
+
+
+If you are setting up your own Twitter bot this readme should help you out once I am done the project fully it should be nicely formatted and explanative
+
+
+Because I have been posting all this online I use Environment variables (os.getenv calls). This is probably not the best way to do stuff, but I like it.
+Obviously you can hardcode these value, but if you also want to add them the same way I did, use $Env:VARIABLE_NAME="value" in powershell to set these.
+I am currently editing all the code and will update this readme as I see fit! 
+Also, there will probably be some code I have in these that isn't referenced in the readmes because I did a lot of unnecessary testing and messing around
+
+
+### Database Setup
+1. Download MySQL and MySQL toolbench
+2. Create a root user and accompanying password
+3. Add ROOT_PASSWORD as an environment variable in powershell
+3. Run the create_database.py file in Tests (Or just create by any means) then run the accompanying test file to see that it worked or check SQL Workbench
+4. Run the create_tables.py file in Tests, then run the accompanying test file to see if they were created successfully.
+	a. There should be some test data bootstrapped in so you can run queries in workbench or through python files
+5. Ahhh This is it I think!!! May edit this later after I replicate this somewhere else!
+
+
+
+### Environment Setup
+Eventually this will be hosted on AWS or Azure so I will include notes on how to do that here! Also will include some install notes here for desktop usage if I feel like it!
+
+Note: my requirements.txt does not contain all of the requirements yet. I am sure of that, but will update it at the end because I am not sure what I'm missing and just don't feel like doing all that now.
