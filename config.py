@@ -43,6 +43,7 @@ def connect_db():
 
 
 #Putthing these in two different methods because I have to??? Not really sure if I need to even have this in config. Could get away with putting it elsewhere
+#I don't think I really will need this method, but will leave it for now
 def get_db_cursor(mydb):
     mycursor = mydb.cursor()
 

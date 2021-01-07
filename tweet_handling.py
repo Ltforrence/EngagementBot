@@ -3,25 +3,26 @@ import tweepy
 import logging
 import os
 from reply_string_handling import set_since_id
+from user_data_handling import set_run_logs
 
 logger = logging.getLogger()
 
 
-def handle_tweets(api, since, settings):
+def handle_tweets(api, since, settings, mydb):
 
     #Now changing how timeline functions. Pulling only tweets that are newer than the newest one in the previoous try
     #making the initial count 50 because all the ones after that should be lower than 50 and in case its been off for awhile this will probably grab all tweets bot missed while off.
     #This include_rts does work which is pretty coolio
     timeline = api.home_timeline(since_id = since, count = 50, include_rts = False) #getting rid of exclude replies here and will change the logic on replies
 
-    since = like_tweets(api, since, timeline, settings)
+    since = like_tweets(api, since, timeline, settings, mydb)
 
     return since
 
 
 
 
-def like_tweets(api, since, timeline, settings):
+def like_tweets(api, since, timeline, settings, mydb):
     #might have to put a if any tweets then do this for loop
     for tweet in timeline:
         if not tweet.favorited:
@@ -30,6 +31,7 @@ def like_tweets(api, since, timeline, settings):
                 if settings[tweet.user.id].like == 1:
                     print(f"{tweet.id} : {tweet.user.name} said {tweet.text}")
                     api.create_favorite(tweet.id)
+                    ###Consider putting a user_history object here too just for fun (This would allow us to unlike all their tweets after they unfollow and other stuff for sure)
                 tweet_reply_check(api, tweet, settings) # This only needs to go up here because if they don't exist in settings then they won't have replies turned on. The if user is in settings and its else will be removed from the final method here
             else:  #for now we need to have both of these because I don't have a settings set up for all of my users unfortunately... This will be fixed
                 print(f"{tweet.id} : {tweet.user.name} said {tweet.text}")
@@ -38,6 +40,7 @@ def like_tweets(api, since, timeline, settings):
         if tweet.id > since:
             since = tweet.id
             set_since_id(since)
+            set_run_logs(since, mydb)
     
     return since
 

@@ -16,7 +16,6 @@ def main():
 
     ##The new code order coming in right here baby
     mydb = connect_db()
-    mycursor = get_db_cursor(mydb)
 
     settings = get_user_settings()
 
@@ -24,11 +23,11 @@ def main():
     since = get_since_id()
     while True:
         logger.info("Checking Followers")
-        followers = handle_followers(api, settings)
+        followers = handle_followers(api, settings, mydb)
         logger.info("Checking Tweets")
-        since = handle_tweets(api, since, settings)
+        since = handle_tweets(api, since, settings, mydb)
         logger.info("Checking DMs")
-        handle_dms(api, followers, settings)
+        handle_dms(api, followers, settings, mydb)
         logger.info("Waiting...")
         time.sleep(60)
 

@@ -3,12 +3,13 @@ import tweepy
 import logging
 import time
 from reply_string_handling import new_user_settings, del_user_settings
+from user_data_handling import update_user, add_new_user
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 
-def handle_followers(api, settings):
+def handle_followers(api, settings, mydb):
     followers = api.followers()
 
     follow_followers(api, followers, settings)
@@ -23,7 +24,8 @@ def follow_followers(api, followers, settings):
     logger.info("Retrieving and following followers")
     for follower in followers:
         if not follower.following:
-            new_user_settings(follower, settings) #if following for the first time create a user_settings object for them
+            settings = new_user_settings(follower, settings) #if following for the first time create a user_settings object for them
+            settings = add_new_user(follower, settings) #not sure if I need settings but we will see as we continue to implement here
             logger.info(f"Following {follower.name}")
             follower.follow()
 
@@ -32,7 +34,8 @@ def unfollow_unfollowers(api, followers, settings):
     for followling in tweepy.Cursor(api.friends).items():   
         #instead of making an api call here I will just crosscheck a list of 
         if not followling in followers:
-            del_user_settings(followling, settings)
+            settings = del_user_settings(followling, settings)
+            settings = update_user(followling, settings) #This should change the 1 to 0 in current and remove the user from the settings dict
             logger.info(f"unfollowing {followling.name}")
             api.destroy_friendship(followling.id_str)
 

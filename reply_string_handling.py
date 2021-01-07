@@ -147,6 +147,9 @@ def new_user_settings(temp_user, settings_dict):
         #Then add it
         settings_dict[temp_user.id] = User_Settings(temp_user.id, "", 0, 1, 0, 1)
         set_user_settings(settings_dict)
+        return settings_dict
+    #else
+    return settings_dict
 
 def del_user_settings(temp_user, settings_dict):
     #This code is to be used if a user unfollows
@@ -155,6 +158,9 @@ def del_user_settings(temp_user, settings_dict):
         del settings_dict[temp_user.id]
         set_user_settings(settings_dict)
         print("Deleting user, "+temp_user.name+", who unfollowed you, from user settings")
+        return settings_dict
+    #else: I mean nothing lol happens here but they aren't unfollowed
+    return settings_dict
 
 
 #Here are the two methods for writing to and reading from the since file

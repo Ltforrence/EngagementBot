@@ -4,21 +4,25 @@ import datetime
 from config import create_api
 from reply_string_handling import get_user_settings
 
-api = create_api()
 
-us = get_user_settings()
+#This was for my personal bootstrapping because of how I used to set everything up!
 
-User_Settings = []
-
-Users = []
-
-for key in us.keys():
-    if key != 1129823604 and key != 718475920194068480:
-        User_Settings.append([us[key].username, us[key].like, us[key].reply, us[key].rt, us[key].verified, us[key].reply_string, datetime.datetime.now()])
-        #Do the get here
-        user = api.get_user(us[key].username)
-        print(user.screen_name)
-        Users.append([1, us[key].username, user.screen_name, datetime.datetime.now(), datetime.datetime.now(), 1346946600510386176])
+#api = create_api()
+#
+#us = get_user_settings()
+#
+#User_Settings = []
+#
+#Users = []
+#
+#
+#for key in us.keys():
+#    if key != 1129823604 and key != 718475920194068480:
+#        User_Settings.append([us[key].username, us[key].like, us[key].reply, us[key].rt, us[key].verified, us[key].reply_string, datetime.datetime.now()])
+#        #Do the get here
+#        user = api.get_user(us[key].username)
+#        print(user.screen_name)
+#        Users.append([1, us[key].username, user.screen_name, datetime.datetime.now(), datetime.datetime.now(), 1346946600510386176])
 
 
 mydb = mysql.connector.connect(

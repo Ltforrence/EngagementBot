@@ -4,6 +4,7 @@ import logging
 import os
 from User_Settings import User_Settings
 from reply_string_handling import new_user_reply, user_reply_off, set_user_settings, user_like_off, user_like_on, user_rt_off, user_rt_on
+from user_data_handling import add_new_user, update_user
 
 #This file is the worst.
 #For this I am truly sorry
@@ -17,7 +18,7 @@ logger = logging.getLogger()
 
 
 
-def handle_dms(api, followers, settings):
+def handle_dms(api, followers, settings, mydb):
     #This method will take all dms from the past 30 days read them and respond to them accordingly then delete them from my interface
     #if dm is HELP then it will give it instructions on what it can do. I will handle that first
     DMs = api.list_direct_messages()
@@ -27,14 +28,14 @@ def handle_dms(api, followers, settings):
         temp_user = api.get_user(dm.message_create['sender_id'])
         if temp_user in followers:
             #reply to them
-            message = construct_message(dm, api, temp_user, settings)
+            message = construct_message(dm, api, temp_user, settings, mydb)
             send_dm(api, message, temp_user)
         #Then delete the message. I think this only deletes it for the bot. thats what the documentation seemed to indicate, but we will see
         api.destroy_direct_message(dm.id)
 
 
 
-def construct_message(dm, api, temp_user, settings):
+def construct_message(dm, api, temp_user, settings, mydb):
     #So this message will then interpret the message that was received and send one back
     #for now we will only handle the help command
 
