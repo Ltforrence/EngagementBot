@@ -5,6 +5,7 @@ import os
 import json
 from User_Settings import User_Settings
 import mysql.connector
+import datetime
 
 
 logger = logging.getLogger()
@@ -35,10 +36,11 @@ def add_user_history_event():
     print("Adding user history event")
 
 
-def add_new_user(temp_user, settings_dict):
+def add_new_user(temp_user, settings_dict, mydb):
     print("Adding new user")
     #Run query to see if user already exists but is not current
-        #change current to 1
+        #update_user_table()
+            #this changes current to 1
         #check to make sure they have a user_settings object (They should, but just check in case)
     #else
         #add a new user with temp user stuff
@@ -52,13 +54,17 @@ def add_new_user_settings():
     #We know that this user settings doesn't exist so just run an insert statement!
 
 
-def update_user_settings():
+def update_user_settings(screen_name, user_settings, settings_dict, mydb):
     print("Updating user settings")
+    message = ""
+
+
+    return message
 
 
 def update_user_table():
     print("Updating user table")
-
+    #Change current to 1 for this user
 
 
 def update_user(temp_user, settings_dict):
@@ -84,16 +90,58 @@ def update_user(temp_user, settings_dict):
 
 
 #These will be for reading from and writing to the most recent 
-def get_since_id(mydb):
+def get_last_runlog(mydb):
     print("Getting since ID from run_logs")
     #get the most recent run_logs row
     #make a new one with the current time as start/end time and the since_id_end as both start/end id and make number one greater than the previous one
     #return that since id
+    mycursor = mydb.cursor(buffered = True) #have to do this because you get an error basically that you are requesting the same info again sometimes (I think I am actually wrong here. Results are lazilly loaded tho and mysql is complaining). I can't not request it unless I keep track of my last request which I don't wanna do at the moment. Maybe in the future
+    mycursor.execute("SELECT since_id_end, session_id from run_logs ORDER BY session_id desc")
+
+    #Just doing fetchone should get me the top one and should put em different
+    myresult = mycursor.fetchone()
+
+    #This should be the order they come to me in and since I only got one it should work
+    since_id = myresult[0]
+    session_id = myresult[1]
+
+    #### now we create a new run_log entry
+    run_log = [since_id, since_id, session_id+1, datetime.datetime.now(), datetime.datetime.now()]
+
+    sqlFormula = "INSERT INTO run_logs (since_id_start, since_id_end, session_id, session_time_start, session_time_end) VALUES (%s, %s, %s, %s, %s)"
+
+
+    mycursor.execute(sqlFormula, run_log)
+
+
+    mydb.commit()
+
+    return since_id
+
+
 
 
 def set_run_logs(since, mydb):
     print("Setting since ID in run_logs")
     #Get the most recent run_logs row 
     #Run an update of it to change since_id_end and the time_end or whatever
+
+    mycursor = mydb.cursor(buffered = True)
+
+
+    #I definitely do not need to run two executes here, but I will fix that when I am not tired!
+    mycursor.execute("SELECT session_id from run_logs ORDER BY session_id desc")
+    myresult = mycursor.fetchone() #has to be a single number
+    session_id = myresult[0] #doing this because it yelled at me for not "reading" the result
+
+    sqlformula = ("UPDATE run_logs SET since_id_end = %s, session_time_end = %s WHERE session_id = %s")
+
+    data = [since, datetime.datetime.now(), session_id]
+
+    mycursor.execute(sqlformula, data)
+
+    mydb.commit()
+
+
 
     

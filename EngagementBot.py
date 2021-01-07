@@ -5,6 +5,7 @@ from dm_handling import handle_dms
 from tweet_handling import handle_tweets
 from reply_string_handling import get_user_settings, get_since_id, set_since_id
 from follower_handling import handle_followers
+from user_data_handling import get_last_runlog
 import time
 
 logging.basicConfig(level=logging.INFO)
@@ -21,6 +22,17 @@ def main():
 
     #Now because we have to lol, we are gonna get and set this every time it changes in a file
     since = get_since_id()
+
+
+    sincecheck = get_last_runlog(mydb)
+
+
+    #This code is only in here for the run_logs testing I am about to do!
+    if since == sincecheck:
+        print("Since IDs match!")
+    else:
+        print("Since IDs do not match!")
+
     while True:
         logger.info("Checking Followers")
         followers = handle_followers(api, settings, mydb)

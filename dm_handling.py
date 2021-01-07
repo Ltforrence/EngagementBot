@@ -4,7 +4,7 @@ import logging
 import os
 from User_Settings import User_Settings
 from reply_string_handling import new_user_reply, user_reply_off, set_user_settings, user_like_off, user_like_on, user_rt_off, user_rt_on
-from user_data_handling import add_new_user, update_user
+from user_data_handling import update_user_settings
 
 #This file is the worst.
 #For this I am truly sorry
@@ -64,10 +64,22 @@ def construct_message(dm, api, temp_user, settings, mydb):
         #yay we did it this looks okay!
         message = user_like_on(temp_user, settings)
 
+        #if settings[temp_user.id].like == 0:
+        #    settings[temp_user.id].like = 1
+        #    message = update_user_settings(temp_user.screen_name, settings[temp_user.id], settings)
+        #else:
+        #    message = "Likes were already turned on for you. If this was not the case, then something went wrong and please use our MESSAGE feature"
+
 
     elif recieved_text[0:8].upper()=="LIKE OFF":
         #Yeaaaaah so lets just change the user_settings object now...
         message = user_like_off(temp_user, settings)
+
+        #if settings[temp_user.id].like == 1:
+        #    settings[temp_user.id].like = 0
+        #    message = update_user_settings(temp_user.screen_name, settings[temp_user.id], settings)
+        #else:
+        #    message = "Likes were already turned off for you. If this was not the case, then something went wrong and please use our MESSAGE feature"
 
 
     elif recieved_text.upper() == "REPLY ON":
@@ -76,20 +88,46 @@ def construct_message(dm, api, temp_user, settings, mydb):
         new_user_reply(temp_user, greeting, settings)
         message = "Congrats! You have changed your reply message to '" + greeting + "'"
 
+        #if settings[temp_user.id].reply == 0:
+        #    settings[temp_user.id].reply = 1
+        #    settings[temp_user.id].reply_string = greeting
+        #    message = update_user_settings(temp_user.screen_name, settings[temp_user.id], settings)
+        #else:
+        #    message = "Replies were already turned on for you. If this was not the case, then something went wrong and please use our MESSAGE feature"
+
 
     elif recieved_text[0:10].upper() == "REPLY OFF":
         #turn off replies
         message = user_reply_off(temp_user, settings)
+
+        #if settings[temp_user.id].reply == 1:
+        #    settings[temp_user.id].reply = 0
+        #    message = update_user_settings(temp_user.screen_name, settings[temp_user.id], settings)
+        #else:
+        #    message = "Replies were already turned off for you. If this was not the case, then something went wrong and please use our MESSAGE feature"#
 
 
     elif recieved_text[0:10].upper() == "RT ON":
         #turn on retweets
         message = user_rt_on(temp_user, settings)
 
+        #if settings[temp_user.id].rt == 0:
+        #    settings[temp_user.id].rt = 1
+        #    message = update_user_settings(temp_user.screen_name, settings[temp_user.id], settings)
+        #else:
+        #    message = "Retweets were already turned on for you. If this was not the case, then something went wrong and please use our MESSAGE feature"
+
 
     elif recieved_text[0:6].upper()=="RT OFF":
         #turn off retweets
         message = user_rt_off(temp_user, settings)
+
+
+        #if settings[temp_user.id].rt == 1:
+        #    settings[temp_user.id].rt = 0
+        #    message = update_user_settings(temp_user.screen_name, settings[temp_user.id], settings)
+        #else:
+        #    message = "Retweets were already turned off for you. If this was not the case, then something went wrong and please use our MESSAGE feature"
 
 
     elif recieved_text[0:12].upper() == "REPLY STRING":
@@ -99,6 +137,14 @@ def construct_message(dm, api, temp_user, settings, mydb):
             greeting = "Great tweet " + temp_user.name
         new_user_reply(temp_user, greeting, settings)
         message = "Congrats! You have changed your reply message to '" + recieved_text[13:] + "'"
+
+
+        #if settings[temp_user.id].verified == 1:
+        #    settings[temp_user.id].reply = 1 #It might already be but who cares
+        #    settings[temp_user.id].reply_string = greeting
+        #    message = update_user_settings(temp_user.screen_name, settings[temp_user.id], settings)
+        #else:
+        #    message = "Unfortunately you are not verified so you do not have access to this feature. You can still use REPLY, to have simple replies turned on. If you would like to be verified please use our VERIFYME feature."
 
 
     elif recieved_text[0:7].upper() == "MESSAGE":
