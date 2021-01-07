@@ -120,7 +120,7 @@ def get_last_runlog(mydb):
 
 
 
-
+#Ultimately I am considering having this set once per minute even if the since_id has not changed, just so I can actually monitor bot downtime myself. I do really like to know that stuff. (if I do this I will just put since second and have it set to 0 when no value is passed in so I can just do that. Or tbh just keep passing in the same value it don't matter if since_id is updated without changing it)
 def set_run_logs(since, mydb):
     print("Setting since ID in run_logs")
     #Get the most recent run_logs row 
