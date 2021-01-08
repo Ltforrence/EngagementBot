@@ -32,56 +32,123 @@ def get_user_settings(mydb):
     return settings_dict
             
 
-def add_user_history_event():
+def add_user_history_event(mydb, temp_user, event, message):
     print("Adding user history event")
+    mycursor = mydb.cursor()
+
+    mycursor.execute("INSERT INTO user_history (user_id, event_time, event_string, event_type_id) VALUES(%s, %s, %s, %s)", [temp_user.id, datetime.datetime.now(), message, event])
+
+    mydb.commit()
 
 
-def add_new_user(temp_user, settings_dict, mydb):
+def add_new_user(mydb, temp_user, settings_dict):
     print("Adding new user")
-    #Run query to see if user already exists but is not current
-        #update_user_table()
-            #this changes current to 1
-        #check to make sure they have a user_settings object (They should, but just check in case)
-    #else
-        #add a new user with temp user stuff
-        #add_new_user_settings()
+    mycursor = mydb.cursor()
+
+    mycursor.execute("SELECT * from user WHERE user_id = "+str(temp_user.id))
+
+    #If the above returns anything then they exist
+    if mycursor.rowcount == 1:
+        #update user now since they already exist. Make current = 1
+        settings_dict = update_user(mydb, temp_user, settings_dict, 1)
+    else:
+        #add new user
+        mycursor.execute("INSERT INTO user (current, user_id, username, creation_date, Updated_date, since_id) VALUES(%s, %s, %s, %s, %s, %s)", [1, temp_user.id, temp_user.screen_name, datetime.datetime.now(), datetime.datetime.now(), 1346946600510386176])
+
+        #add new user_settings 
+        #add_new_user_settings(mydb, temp_user)
+        mycursor.execute("INSERT INTO user_settings (user_id, likes, reply, retweet, verified, reply_string, updated_date) values(%s, %s, %s, %s, %s, %s, %s)", [temp_user.id, 1, 0, 0, 1, "", datetime.datetime.now()])
+
+
+        add_user_history_event(mydb, temp_user, 1, "Following for the first time. Called from add_new_user")
+
+        #commit both of them
+        mydb.commit()
+
+        #now get all user setttings
+        settings_dict = get_user_settings(mydb)
 
     return settings_dict
 
 
-def add_new_user_settings():
+
+#might end up using this but for now will just run this statement in add_new_user
+def add_new_user_settings(mydb, temp_user):
     print("Adding new user settings")
     #We know that this user settings doesn't exist so just run an insert statement!
 
+    mycursor = mydb.cursor()
 
-def update_user_settings(screen_name, user_settings, settings_dict, mydb):
+    mycursor.execute()
+
+
+
+def update_user_settings(mydb, us, temp_user, event):
     print("Updating user settings")
-    message = ""
 
 
-    return message
+    mycursor = mydb.cursor()
+
+    mycursor.execute("Update user_settings SET likes = %s, reply = %s, retweet=%s, verified = %s, reply_string = %s, updated_date = %s WHERE user_id = %s", [us.like, us.reply, us.rt, us.verified, us.reply_string, datetime.datetime.now(), us.username])
 
 
-def update_user_table():
-    print("Updating user table")
-    #Change current to 1 for this user
+    message = "User "
+    if event == 5:
+        message = message + "turned on likes"
+    elif event == 6:
+        message = message + "turned off likes"
+    elif event == 7:
+        message = message + "turned on retweets"
+    elif event == 8:
+        message = message + "turned off retweets"
+    elif event == 9:
+        message = message + "turned on replies"
+    elif event == 10:
+        message = message + "turned off replies"
+    elif event == 4:
+        message = message + "changed reply string"
+
+    add_user_history_event(mydb, temp_user, event, message)
+    
 
 
-def update_user(temp_user, settings_dict):
+
+    message = message + " from update_user_settings"
+    
+    mydb.commit()
+
+
+
+def update_user(mydb, temp_user, settings_dict, event = 2):
     print("Updating user")
     
-    #if user is unfollowing
-        #We run an update of the user table
-    #if any other change
-        #update_user_settings()
+    #This will only be called if user is following or unfollowing
 
-    #either way
-    #add_user_history_event()
+    #Technically it will also be called if a user changes their @name (I think will have to check logic) so eventually we will have to do that too. That will be event 3
 
-    #Commit it all
+    #Curr is what will be set to current in the db
+    curr = 0
+    message = "Unfollowing user from inside of update_user method. Really need to update this message later!"
+    if event == 1:
+        curr = 1 # if event = 1 that mean they are following and were already in the database
+        message = "Following user from inside of update_user method."
 
-    #print message (in the thing you gotta check that it successfully went through!!!! ahhhhhhh
 
+
+    mycursor = mydb.cursor()
+
+    mycursor.execute("UPDATE user SET current = %s, Updated_date = %s WHERE user_id = %s", [curr, datetime.datetime.now(), temp_user.id])
+
+    #Commit it
+    mydb.commit()
+
+
+
+    #add_user_history_event() for following or unfollowing or name change if that does in fact come here??? who knows
+    add_user_history_event(mydb, temp_user, event, message)
+
+    #oh lol then you need to reget the settings dict because that user may have followed you before
+    settings_dict = get_user_settings(mydb)
     return settings_dict
 
 
