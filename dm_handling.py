@@ -3,7 +3,6 @@ import tweepy
 import logging
 import os
 from User_Settings import User_Settings
-#from reply_string_handling import new_user_reply, user_reply_off, set_user_settings, user_like_off, user_like_on, user_rt_off, user_rt_on
 from user_data_handling import update_user_settings, add_user_history_event
 
 #This file is the worst.
@@ -24,13 +23,22 @@ def handle_dms(api, followers, settings, mydb):
     DMs = api.list_direct_messages()
     for dm in DMs:
         #if sender is following then proceed and reply accordingly
+        #If they are not following I send a thing that says please follow me to learn about and use functionality
         #This may be a costly api call in the end so might not be worth it, but we'll see. It will save time and complexity
         temp_user = api.get_user(dm.message_create['sender_id'])
         if temp_user in followers:
-            #reply to them
+            #construct message
             message = construct_message(dm, api, temp_user, settings, mydb)
+            #Reply to user
             send_dm(api, message, temp_user)
-        #Then delete the message. I think this only deletes it for the bot. thats what the documentation seemed to indicate, but we will see
+
+            #Log message in history for debugging (can only do this for now because I don't have a big user base yet)
+            add_user_history_event(mydb, temp_user, 3, "Recieved DM from user with the following text: " + dm.message_create['message_data']['text'])
+        else:
+            message = "I'm sorry, but only followers can interact with EngagmentBot. Please follow me to learn about and use EngagementBot's functionality.\nThank you!"
+            send_dm(api, message, temp_user)
+
+        #Then delete the message. This only deletes it for the bot, but useful to just delete them
         api.destroy_direct_message(dm.id)
 
 
@@ -43,7 +51,7 @@ def construct_message(dm, api, temp_user, settings, mydb):
     recieved_text = dm.message_create['message_data']['text']
     if  recieved_text.upper() == "HELP":
         #construct help message reply
-        message = "HELP MENU\n\nMany of these functions have their own help pages e.g. HELP REPLY will return a REPLY help message.\n\nFunctions:\n\nREPLY ON-- Engagement Bot will reply to your tweets with simple message and your current screen name!\n\nREPLY STRING -- Engagement Bot will reply to your tweets with custom message you create\n\REPLY OFF -- End and delete your current reply settings\nLIKE ON/OFF -- Will turn on or off the feature that EngagementBot likes all of your tweets\nRT ON/OFF -- Will turn on or off the feature that has EngagementBot retweet all your tweets\n\nMESSAGE -- send message to Luke about issues or possible new functionality \n\nINFO -- Will give you info about bot's current progress \n\nThank you for using Luke's Engagement Bot"
+        message = "HELP MENU\n\nMany of these functions have their own help pages e.g. HELP REPLY will return a REPLY help message.\n\nFunctions:\n\nREPLY ON-- Engagement Bot will reply to your tweets with simple message and your current screen name!\n\nREPLY STRING -- Engagement Bot will reply to your tweets with custom message you create\n\nREPLY OFF -- End and delete your current reply settings\n\nLIKE ON/OFF -- Will turn on or off the feature that EngagementBot likes all of your tweets\n\nRT ON/OFF -- Will turn on or off the feature that has EngagementBot retweet all your tweets\n\nSETTINGS -- Will return current user settings \n\nMESSAGE -- send message to Luke about issues or possible new functionality \n\nINFO -- Will give you info about bot's current progress \n\nThank you for using Luke's Engagement Bot"
 
 
     elif recieved_text[0:4].upper()=="HELP":
@@ -59,27 +67,26 @@ def construct_message(dm, api, temp_user, settings, mydb):
         else:
             message = "I'm sorry I don't understand that command, please reply 'HELP' if you would like more information about my functions"
 
-
+    elif recieved_text.upper() == "SETTINGS":
+        message = "This has not been fully implemented yet haha! Sorry about that."
     elif recieved_text[0:7].upper()=="LIKE ON":
-        #yay we did it this looks okay!
-        #message = user_like_on(temp_user, settings)
-
+        #Check if like was already on. If not change it to on and set that in db. 
         if settings[temp_user.id].like == 0:
             settings[temp_user.id].like = 1
             update_user_settings(mydb, settings[temp_user.id], temp_user, 5)
             message = "Congrats you have successfully turned likes on for your account"
+        #If already on then just send this reply message
         else:
             message = "Likes were already turned on for you. If this was not the case, then something went wrong and please use our MESSAGE feature"
 
 
     elif recieved_text[0:8].upper()=="LIKE OFF":
-        #Yeaaaaah so lets just change the user_settings object now...
-        #message = user_like_off(temp_user, settings)
-
+        #Check if like was already off. If not change it to off and set that in db. 
         if settings[temp_user.id].like == 1:
             settings[temp_user.id].like = 0
             update_user_settings(mydb, settings[temp_user.id], temp_user, 6)
             message = "Congrats you have successfully turned likes off for your account"
+        #If already off then send this reply
         else:
             message = "Likes were already turned off for you. If this was not the case, then something went wrong and please use our MESSAGE feature"
 
@@ -87,9 +94,8 @@ def construct_message(dm, api, temp_user, settings, mydb):
     elif recieved_text.upper() == "REPLY ON":
         ##This is now changed to be just a standard reply because for the long run we don't want unverified users to be able to put whatever name in here
         greeting = "Great Tweet " + temp_user.name
-        #new_user_reply(temp_user, greeting, settings)
-        #message = "Congrats! You have changed your reply message to '" + greeting + "'"
 
+        #Same as ones before, but this one you also set the reply_string here
         if settings[temp_user.id].reply == 0:
             settings[temp_user.id].reply = 1
             settings[temp_user.id].reply_string = greeting
@@ -100,9 +106,8 @@ def construct_message(dm, api, temp_user, settings, mydb):
 
 
     elif recieved_text[0:10].upper() == "REPLY OFF":
-        #turn off replies
-        #message = user_reply_off(temp_user, settings)
-
+        #turn off replies, same as other ones
+        #Don't reset the reply_string to nothing because there is no need
         if settings[temp_user.id].reply == 1:
             settings[temp_user.id].reply = 0
             update_user_settings(mydb, settings[temp_user.id], temp_user, 10)
@@ -113,8 +118,7 @@ def construct_message(dm, api, temp_user, settings, mydb):
 
     elif recieved_text[0:10].upper() == "RT ON":
         #turn on retweets
-        #message = user_rt_on(temp_user, settings)
-
+        #We do all this work outside of the methods because it just calls the update user object and woulldn't know what we had updated
         if settings[temp_user.id].rt == 0:
             settings[temp_user.id].rt = 1
             update_user_settings(mydb, settings[temp_user.id], temp_user, 7)
@@ -125,9 +129,6 @@ def construct_message(dm, api, temp_user, settings, mydb):
 
     elif recieved_text[0:6].upper()=="RT OFF":
         #turn off retweets
-        #message = user_rt_off(temp_user, settings)
-
-
         if settings[temp_user.id].rt == 1:
             settings[temp_user.id].rt = 0
             update_user_settings(mydb, settings[temp_user.id], temp_user, 8)
@@ -141,8 +142,6 @@ def construct_message(dm, api, temp_user, settings, mydb):
         greeting = recieved_text[13:]
         if greeting == "":
             greeting = "Great tweet " + temp_user.name
-        #new_user_reply(temp_user, greeting, settings)
-        message = "Congrats! You have changed your reply message to '" + recieved_text[13:] + "'"
 
 
         if settings[temp_user.id].verified == 1:

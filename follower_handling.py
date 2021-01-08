@@ -2,19 +2,18 @@
 import tweepy
 import logging
 import time
-#from reply_string_handling import new_user_settings, del_user_settings
 from user_data_handling import update_user, add_new_user
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 
+#This is what is called from main
 def handle_followers(api, settings, mydb):
     followers = api.followers()
 
     follow_followers(api, followers, settings, mydb)
-        #okay so unfollow is going to be a somewhat costly method
-        #so instead of writing something better, for now I will just check if followers and following have the same number then do it if they do not
+    #Checking to see if someone unfollowed is a costly method, so to not have to run it a lot, first we check to see if follower+count != follow_count 
     if check_follower_count(api):
         unfollow_unfollowers(api, followers, settings, mydb)
 
@@ -34,10 +33,12 @@ def unfollow_unfollowers(api, followers, settings, mydb):
     for followling in tweepy.Cursor(api.friends).items():   
         #instead of making an api call here I will just crosscheck a list of 
         if not followling in followers:
-            #settings = del_user_settings(followling, settings)
-            settings = update_user(mydb, followling, settings) #This should change the 1 to 0 in current and remove the user from the settings dict
+            #We don't delete past users, just change them to not current
+            settings = update_user(mydb, followling, settings)
             logger.info(f"unfollowing {followling.name}")
+            #This is the actual unfollow method in tweepy
             api.destroy_friendship(followling.id_str)
+
 
 #This method will determine if you need to run unfollow unfollowers if the counts are not equal
 def check_follower_count(api):

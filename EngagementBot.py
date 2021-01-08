@@ -18,20 +18,11 @@ def main():
     ##The new code order coming in right here baby
     mydb = connect_db()
 
+    #User's settings are stored in the db, but instead of getting them each time, we just have an object that is passed through the code to make everything a bit simpler
     settings = get_user_settings(mydb)
 
-    #Now because we have to lol, we are gonna get and set this every time it changes in a file
-    #e = get_since_id()
-
-
+    #In order to know where the last session ended (last tweet sent before the bot was turned off) we read from the db to see what the last one was. 
     since = get_last_runlog(mydb)
-
-
-    #This code is only in here for the run_logs testing I am about to do!
-    #if since == sincecheck:
-    #    print("Since IDs match!")
-    #else:
-    #    print("Since IDs do not match!")
 
     while True:
         logger.info("Checking Followers")
