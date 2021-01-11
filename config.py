@@ -34,9 +34,9 @@ def create_api():
 
 def connect_db():
     mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        passwd= os.getenv("ROOT_PASSWORD"),
+        host=os.getenv("HOSTNAME"),
+        user="admin",
+        passwd= "X3#gY78$qi90GG",
         database="engagementbot"
     )
     return mydb
