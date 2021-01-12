@@ -17,8 +17,7 @@ def get_user_settings(mydb):
     
     settings_dict = {}
     print("Getting User Settings From DB")
-    mycursor = mydb.cursor()
-
+    mycursor = mydb.cursor(buffered = True)
     #located in queries folder as Get_Current_User_Settings
     mycursor.execute("SELECT us.user_id, us.reply_string, us.retweet, us.likes, us.reply, us.verified FROM user u join user_settings us on u.user_id = us.user_id where u.current = 1")
 
@@ -34,7 +33,7 @@ def get_user_settings(mydb):
 
 def add_user_history_event(mydb, temp_user, event, message):
     print("Adding user history event")
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered = True)
 
     mycursor.execute("INSERT INTO user_history (user_id, event_time, event_string, event_type_id) VALUES(%s, %s, %s, %s)", [temp_user.id, datetime.datetime.now(), message, event])
 
@@ -43,7 +42,7 @@ def add_user_history_event(mydb, temp_user, event, message):
 
 def add_new_user(mydb, temp_user, settings_dict):
     print("Adding new user")
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered = True)
 
     mycursor.execute("SELECT * from user WHERE user_id = "+str(temp_user.id))
 
@@ -77,7 +76,7 @@ def add_new_user_settings(mydb, temp_user):
     print("Adding new user settings")
     #We know that this user settings doesn't exist so just run an insert statement!
 
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered = True)
 
     mycursor.execute()
 
@@ -87,7 +86,7 @@ def update_user_settings(mydb, us, temp_user, event):
     print("Updating user settings")
 
 
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered = True)
 
     mycursor.execute("Update user_settings SET likes = %s, reply = %s, retweet=%s, verified = %s, reply_string = %s, updated_date = %s WHERE user_id = %s", [us.like, us.reply, us.rt, us.verified, us.reply_string, datetime.datetime.now(), us.username])
 
@@ -135,7 +134,7 @@ def update_user(mydb, temp_user, settings_dict, event = 2):
 
 
 
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(buffered = True)
 
     mycursor.execute("UPDATE user SET current = %s, Updated_date = %s WHERE user_id = %s", [curr, datetime.datetime.now(), temp_user.id])
 
@@ -158,7 +157,7 @@ def update_user(mydb, temp_user, settings_dict, event = 2):
 
 #These will be for reading from and writing to the most recent 
 def get_last_runlog(mydb):
-    print("Getting since ID from run_logs")
+    #print("Getting since ID from run_logs")
     #get the most recent run_logs row
     #make a new one with the current time as start/end time and the since_id_end as both start/end id and make number one greater than the previous one
     #return that since id
@@ -189,7 +188,7 @@ def get_last_runlog(mydb):
 
 #Ultimately I am considering having this set once per minute even if the since_id has not changed, just so I can actually monitor bot downtime myself. I do really like to know that stuff. (if I do this I will just put since second and have it set to 0 when no value is passed in so I can just do that. Or tbh just keep passing in the same value it don't matter if since_id is updated without changing it)
 def set_run_logs(since, mydb):
-    print("Setting since ID in run_logs")
+    #print("Setting since ID in run_logs")
     #Get the most recent run_logs row 
     #Run an update of it to change since_id_end and the time_end or whatever
 

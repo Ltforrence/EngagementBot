@@ -3,9 +3,8 @@ import logging
 from config import create_api, connect_db, get_db_cursor
 from dm_handling import handle_dms
 from tweet_handling import handle_tweets
-#from reply_string_handling import get_user_settings, get_since_id, set_since_id
 from follower_handling import handle_followers
-from user_data_handling import get_last_runlog, get_user_settings
+from user_data_handling import get_last_runlog, get_user_settings, set_run_logs
 import time
 
 logging.basicConfig(level=logging.INFO)
@@ -32,6 +31,8 @@ def main():
         logger.info("Checking DMs")
         handle_dms(api, followers, settings, mydb)
         logger.info("Waiting...")
+        ##Now setting this every minute since it is good to have an accurate time when the session actually ended. Also using the db connection once a minute is good to know whether it is still working?
+        set_run_logs(since, mydb)
         time.sleep(60)
 
 if __name__ == "__main__":
