@@ -3,11 +3,12 @@
 ### Info
 This bot is a work in progress. Currently it functions, but the documentation on this site is limited and will be in the end updated so it is easily reproducible for anyone. 
 The tests folder doesn't contain real "tests" its mostly just tests to make sure funtions work before I put them in my code. Maybe at some point I'll put in some unit testing and make it cleaner.
-Eventually setup will tell you how to run everything and this doc will give an overview, but that is still a week or so away. I need to get this thing hosted somewhere soon, but for now it runs on my local so there are a lot of variables at play.
+Eventually setup will tell you how to run everything and this doc will give an overview, but that is still a ways or so away. I need to get this thing hosted somewhere soon, but for now it runs on my local so there are a lot of variables at play.
 
 
 ### Current Progress
-I have finished changing everything to MySQL backing. Some events are logged, but errors are not. I will next work on hosting it and also making sure that errors don't necessarily kill the application. Possibly have the bot send me a dm when an exception is thrown.
+I have finished changing everything to MySQL backing. Some events are logged, but errors are not. I just finished getting it hosted on AWS and so that will be cool to have it running all the time.
+Hosting it took a lot longer than expected because I was trying to learn a lot about AWS and as a result made everything harder. Everything got delayed a bit because of this.
 Also will be working on implementing scheduling tweets/interactions. Will be trying to make my own wrapper for creating api calls to twitter's api method for tweet scheduling. 
 
 
