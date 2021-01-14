@@ -30,13 +30,12 @@ def handle_dms(api, followers, settings, mydb):
             #construct message
             message = construct_message(dm, api, temp_user, settings, mydb)
             #Reply to user
-            send_dm(api, message, temp_user)
+            send_dm(api, message, temp_user, mydb, dm)
 
             #Log message in history for debugging (can only do this for now because I don't have a big user base yet)
-            add_user_history_event(mydb, temp_user, 3, "Recieved DM from user with the following text: " + dm.message_create['message_data']['text'])
-        else:
+        elif dm.message_create['sender_id'] != 1339728373854203906: #if the sender is not in followers and it was not sent by the bot itself (because this used to cause an error lol)
             message = "I'm sorry, but only followers can interact with EngagmentBot. Please follow me to learn about and use EngagementBot's functionality.\nThank you!"
-            send_dm(api, message, temp_user)
+            send_dm(api, message, temp_user, mydb, dm)
 
         #Then delete the message. This only deletes it for the bot, but useful to just delete them
         api.destroy_direct_message(dm.id)
@@ -100,7 +99,7 @@ def construct_message(dm, api, temp_user, settings, mydb):
             settings[temp_user.id].reply = 1
             settings[temp_user.id].reply_string = greeting
             update_user_settings(mydb, settings[temp_user.id], temp_user, 9)
-            message = "Contrats! you have updated your settings and turned on replies. Engagementbot will now reply '"+greeting+"' to all of your tweets!"
+            message = "Congrats! you have updated your settings and turned on replies. Engagementbot will now reply '"+greeting+"' to all of your tweets!"
         else:
             message = "Replies were already turned on for you. If this was not the case, then something went wrong and please use our MESSAGE feature"
 
@@ -111,7 +110,7 @@ def construct_message(dm, api, temp_user, settings, mydb):
         if settings[temp_user.id].reply == 1:
             settings[temp_user.id].reply = 0
             update_user_settings(mydb, settings[temp_user.id], temp_user, 10)
-            message = "Contrats! you have updated your settings and turned off replies"
+            message = "Congrats! you have updated your settings and turned off replies"
         else:
             message = "Replies were already turned off for you. If this was not the case, then something went wrong and please use our MESSAGE feature"#
 
@@ -179,7 +178,8 @@ def construct_message(dm, api, temp_user, settings, mydb):
 
 
 
-def send_dm(api, message, temp_user):
+def send_dm(api, message, temp_user, mydb, dm):
     if message != "":
+        add_user_history_event(mydb, temp_user, 3, "Recieved DM from user with the following text: " + dm.message_create['message_data']['text'])
         logger.info(f"Sending DM to {temp_user.name}")
         api.send_direct_message(temp_user.id, message)
