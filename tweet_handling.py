@@ -2,7 +2,7 @@
 import tweepy
 import logging
 import os
-from user_data_handling import set_run_logs
+from user_data_handling import set_run_logs, add_user_history_event
 
 logger = logging.getLogger()
 
@@ -29,12 +29,13 @@ def like_tweets(api, since, timeline, settings, mydb):
                 if settings[tweet.user.id].like == 1:
                     print(f"{tweet.id} : {tweet.user.name} said {tweet.text}")
                     api.create_favorite(tweet.id)
-                    ###Consider putting a user_history object here too just for fun (This would allow us to unlike all their tweets after they unfollow and other stuff for sure)
-                tweet_reply_check(api, tweet, settings) # This only needs to go up here because if they don't exist in settings then they won't have replies turned on. The if user is in settings and its else will be removed from the final method here
-            else:  #for now we need to have both of these because I don't have a settings set up for all of my users unfortunately... This will be fixed
-                print(f"{tweet.id} : {tweet.user.name} said {tweet.text}")
-                api.create_favorite(tweet.id)
-            ## check now if name is in tweet replys and get their tag
+                    add_user_history_event(mydb, tweet.user, 12, "Liking tweet "+ tweet.text + " from in tweet_handling.")
+                tweet_reply_check(api, tweet, settings, mydb) # This only needs to go up here because if they don't exist in settings then they won't have replies turned on. The if user is in settings and its else will be removed from the final method here
+        if not tweet.retweeted:
+            if tweet.user.id in settings.keys():
+                if settings[tweet.user.id].rt == 1:
+                    api.retweet(tweet.id)
+                    add_user_history_event(mydb, tweet.user, 13, "Retweeting tweet "+ tweet.text + " from in tweet_handling.")
         if tweet.id > since:
             since = tweet.id
             #set the since into the db
@@ -43,13 +44,13 @@ def like_tweets(api, since, timeline, settings, mydb):
     return since
 
 #In this method we will check the user to see if that user has replies turned on
-def tweet_reply_check(api, tweet, settings):
+def tweet_reply_check(api, tweet, settings, mydb):
     #Now will do a check at the beginning of this to see if it starts with an @ and if it does, do not reply!
     if tweet.text[0:1] != "@":
         if tweet.user.id in settings.keys():
             if settings[tweet.user.id].reply == 1:
                 try:
-                    reply_tweet(api, tweet, settings[tweet.user.id])
+                    reply_tweet(api, tweet, settings[tweet.user.id], mydb)
                 except tweepy.error.TweepError as e:
                     print(e) 
                     #Send to error logs here! There is nothing I know of that should actually fail here though
@@ -60,8 +61,9 @@ def tweet_reply_check(api, tweet, settings):
         print("Not replying because tweet was a reply!")
 
 
-def reply_tweet(api, tweet, US):
+def reply_tweet(api, tweet, US, mydb):
     print("Replying to user: "+ tweet.user.name)
     #This appears to be all you need to do in order to reply to another tweet
     api.update_status("@"+tweet.user.screen_name+" "+US.reply_string, tweet.id)
+    add_user_history_event(mydb, tweet.user, 14, "Replying to tweet "+ tweet.text + "with " + US.reply_string)
 

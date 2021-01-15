@@ -34,9 +34,9 @@ def create_api():
 
 def connect_db():
     mydb = mysql.connector.connect(
-        host="",
+        host="engagementbot2.ccs9ykexia3h.us-east-1.rds.amazonaws.com",
         user="admin",
-        passwd= "",
+        passwd= "X3#gY78$qi90GG",
         database="engagementbot"
     )
     return mydb

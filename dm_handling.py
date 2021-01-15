@@ -33,7 +33,7 @@ def handle_dms(api, followers, settings, mydb):
             send_dm(api, message, temp_user, mydb, dm)
 
             #Log message in history for debugging (can only do this for now because I don't have a big user base yet)
-        elif dm.message_create['sender_id'] != 1339728373854203906: #if the sender is not in followers and it was not sent by the bot itself (because this used to cause an error lol)
+        elif temp_user.id != 1339728373854203906: #if the sender is not in followers and it was not sent by the bot itself (because this used to cause an error lol)
             message = "I'm sorry, but only followers can interact with EngagmentBot. Please follow me to learn about and use EngagementBot's functionality.\nThank you!"
             send_dm(api, message, temp_user, mydb, dm)
 
@@ -165,7 +165,7 @@ def construct_message(dm, api, temp_user, settings, mydb):
 
 
     elif recieved_text.upper() == "INFO":
-        message = "Replies are fully implemented. Trying to make a user_settings object for everyone. Likes/Retweets ON/OFF are also implemented, but will not work until you have at some point turned on Replies lol\nI know this is silly, but soon that will be fixed. That is my next project"
+        message = "All initial Fuctionality is fuly implemented. Bot will like, retweet, and reply to all of your messages if you want! Just hosted it on AWS so it should be running constantly. Would like to implement error logging and make it never actually stop running unless it hits a really fatal error. Soon you should be able to schedule future interactions as well, like have the bot like/reply/retweet hours later on in the day or whenever"
 
 
     else:
