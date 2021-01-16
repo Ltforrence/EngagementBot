@@ -65,5 +65,5 @@ def reply_tweet(api, tweet, US, mydb):
     print("Replying to user: "+ tweet.user.name)
     #This appears to be all you need to do in order to reply to another tweet
     api.update_status("@"+tweet.user.screen_name+" "+US.reply_string, tweet.id)
-    add_user_history_event(mydb, tweet.user, 14, "Replying to tweet "+ tweet.text + "with " + US.reply_string)
+    add_user_history_event(mydb, tweet.user, 14, "Replying to tweet "+ tweet.text + " with " + US.reply_string)
 

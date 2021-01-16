@@ -67,7 +67,10 @@ def construct_message(dm, api, temp_user, settings, mydb):
             message = "I'm sorry I don't understand that command, please reply 'HELP' if you would like more information about my functions"
 
     elif recieved_text.upper() == "SETTINGS":
-        message = "This has not been fully implemented yet haha! Sorry about that."
+        US = settings[temp_user.id]
+        stts = getSettingsString(US)
+        message = "Here are your current settings: \nRetweets: "+stts[0]+"\nLikes: "+stts[1]+"\nReplies: "+stts[2]+"\nReply String: "+stts[3]
+        
     elif recieved_text[0:7].upper()=="LIKE ON":
         #Check if like was already on. If not change it to on and set that in db. 
         if settings[temp_user.id].like == 0:
@@ -115,7 +118,7 @@ def construct_message(dm, api, temp_user, settings, mydb):
             message = "Replies were already turned off for you. If this was not the case, then something went wrong and please use our MESSAGE feature"#
 
 
-    elif recieved_text[0:10].upper() == "RT ON":
+    elif recieved_text[0:10].upper() == "RT ON" or recieved_text.upper() == "RETWEET ON":
         #turn on retweets
         #We do all this work outside of the methods because it just calls the update user object and woulldn't know what we had updated
         if settings[temp_user.id].rt == 0:
@@ -126,7 +129,7 @@ def construct_message(dm, api, temp_user, settings, mydb):
             message = "Retweets were already turned on for you. If this was not the case, then something went wrong and please use our MESSAGE feature"
 
 
-    elif recieved_text[0:6].upper()=="RT OFF":
+    elif recieved_text[0:6].upper()=="RT OFF" or recieved_text.upper() == "RETWEET OFF":
         #turn off retweets
         if settings[temp_user.id].rt == 1:
             settings[temp_user.id].rt = 0
@@ -135,6 +138,10 @@ def construct_message(dm, api, temp_user, settings, mydb):
         else:
             message = "Retweets were already turned off for you. If this was not the case, then something went wrong and please use our MESSAGE feature"
 
+    elif recieved_text[0:7].upper()=="VERIFYME":
+        if settings[temp_user.id].verified == 0:
+            #This is where you will start the verification by adding the name to the table or whatever!
+            message = "Hello, " + temp_user.screen_name + " your verification request is a success! If you would like to send a message to the creator along with this request, please send another message in the next 5 minutes, and it will be sent as well.\nThank you"
 
     elif recieved_text[0:12].upper() == "REPLY STRING":
         #These few lines are a failsafe in case a user doesn't send the correct info
@@ -165,7 +172,7 @@ def construct_message(dm, api, temp_user, settings, mydb):
 
 
     elif recieved_text.upper() == "INFO":
-        message = "All initial Fuctionality is fuly implemented. Bot will like, retweet, and reply to all of your messages if you want! Just hosted it on AWS so it should be running constantly. Would like to implement error logging and make it never actually stop running unless it hits a really fatal error. Soon you should be able to schedule future interactions as well, like have the bot like/reply/retweet hours later on in the day or whenever"
+        message = "All initial Fuctionality is fuly implemented. Bot will like, retweet, and reply to all of your messages if you want! Just hosted it on AWS so it should be running constantly unless I'm doing some testing. Would like to implement error logging and make it never actually stop running unless it hits a really fatal error. Soon you should be able to schedule future interactions as well, like have the bot like/reply/retweet hours later on in the day or whenever"
 
 
     else:
@@ -183,3 +190,17 @@ def send_dm(api, message, temp_user, mydb, dm):
         add_user_history_event(mydb, temp_user, 3, "Recieved DM from user with the following text: " + dm.message_create['message_data']['text'])
         logger.info(f"Sending DM to {temp_user.name}")
         api.send_direct_message(temp_user.id, message)
+
+
+
+def getSettingsString(US):
+    stts = ["OFF", "OFF", "OFF", ""]
+    if US.rt == 1:
+        stts[0] = "ON"
+    if US.like == 1:
+        stts[1] = "ON"
+    if US.reply == 1:
+        stts[2] = "ON"
+        stts[3] = US.reply_string #Technically we don't overwrite the old reply string until they make a new one. But would like to give the appearance as if they don't have one
+
+    return stts
